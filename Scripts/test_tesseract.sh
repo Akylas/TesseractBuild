@@ -11,6 +11,7 @@ if ! source $builddir/project_environment.sh; then
 fi
 
 export TESSDATA_PREFIX=$ROOT/share/tessdata
+mkdir -p $TESSDATA_PREFIX
 
 echo 'Checking for trained data language files...'
 
@@ -27,8 +28,6 @@ for langfile in $langfiles; do
     echo "found $langfile"
     continue
   fi
-
-  mkdir -p $TESSDATA_PREFIX
 
   print -n "downloading $langfile..."
   curl -L -f -s \
@@ -91,7 +90,7 @@ test_image() {
 vars=(
   'Japanese'
   $ASSETSDIR/japanese.imageset/test_hello_hori.png
-  'jpn'
+  'v4_jpn'
   'Hello,世界'
 )
 
