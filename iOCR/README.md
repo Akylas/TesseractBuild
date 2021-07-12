@@ -1,5 +1,5 @@
 <!-- markdownlint-disable-file MD033 -->
-# Configuring Xcode to use a C/C++ API
+# Configuring Xcode to use our Tesseract and Leptonica libraries
 
 If you're looking for help to configure Xcode to use the OCR (or any) C/C++ libraries, this might help.
 
@@ -7,7 +7,15 @@ This is written from my perspective of setting up the basic-iOCR project, and sh
 
 All references to files and XCode settings can be checked and verified in the iOCR Xcode project.
 
-## The overview
+## Overview
+
+The two steps to configure Xcode to use the libraries for Tesseract, Leptonica, and their dependencies (from the main guide), and the language data are:
+
+1. Add the settings.xcconfig file to the project and configure the project to use it
+1. Add a reference to the share directory for the tessdata language files
+
+The xcconfig file sets the linker flags for all the architectures that were just built, the library search path for those binaries, and the include path for the modulemap, which points to the headers for Leptonica and Tesseract.
+
 
 This guide will highlight 4 distinct issues I had to overcome as I was creating my first Xcode project to use the C-APIs for Leptonica and Tesseract.  The first three issues are Xcode-specific build issues, the fourth is a run-time error from one of the unit tests.
 
