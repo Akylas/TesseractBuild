@@ -26,7 +26,7 @@ class StraightUpRecognitionTest: XCTestCase {
         var image = pixReadMem(uint8Pointer, data.count)   // var because image is passed as in-out, so must be mutable
 
         let trainedDataFolder = Bundle.main.path(
-            forResource: "tessdata", ofType: nil, inDirectory: "share")
+            forResource: "tessdata", ofType: nil, inDirectory: ".")
 
         let tessAPI = TessBaseAPICreate()!
         TessBaseAPIInit2(tessAPI, trainedDataFolder, "jpn", OEM_LSTM_ONLY)

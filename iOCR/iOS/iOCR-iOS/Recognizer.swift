@@ -51,7 +51,7 @@ class Recognizer {
         self.tessPIL = tessPIL
         self.tessAPI = TessBaseAPICreate()!
         
-        let trainedDataFolder = Bundle.main.path(forResource: "tessdata", ofType: nil, inDirectory: "share")
+        let trainedDataFolder = Bundle.main.path(forResource: "tessdata", ofType: nil, inDirectory: ".")
         TessBaseAPIInit2(self.tessAPI, trainedDataFolder, trainedDataName, OEM_LSTM_ONLY)
        
         var image = getImage(from: self.uiImage)

@@ -7,10 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F439B40B26A8BFA4004608AD /* tessdata in Resources */ = {isa = PBXBuildFile; fileRef = F439B40A26A8BFA4004608AD /* tessdata */; };
 		F450F23125BA3A9400BDE98E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F450F23025BA3A9400BDE98E /* ContentView.swift */; };
 		F450F24D25BA3C9400BDE98E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F450F24C25BA3C9400BDE98E /* Assets.xcassets */; };
-		F450F25225BA3CBA00BDE98E /* share in Resources */ = {isa = PBXBuildFile; fileRef = F450F25125BA3CBA00BDE98E /* share */; };
-		F450F26F25BA3F5700BDE98E /* iOCR.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = F450F26E25BA3F5700BDE98E /* iOCR.xcconfig */; };
 		F4F4DE3E25B8E0970062BB04 /* iOCR_iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F4DE3D25B8E0970062BB04 /* iOCR_iOSApp.swift */; };
 		F4F4DE4525B8E0970062BB04 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F4F4DE4425B8E0970062BB04 /* Preview Assets.xcassets */; };
 		F4F4DE5025B8E0970062BB04 /* iOCR_iOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F4DE4F25B8E0970062BB04 /* iOCR_iOSTests.swift */; };
@@ -32,9 +31,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F439B40A26A8BFA4004608AD /* tessdata */ = {isa = PBXFileReference; lastKnownFileType = folder; name = tessdata; path = ../../Root/share/tessdata; sourceTree = "<group>"; };
 		F450F23025BA3A9400BDE98E /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		F450F24C25BA3C9400BDE98E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../Assets.xcassets; sourceTree = "<group>"; };
-		F450F25125BA3CBA00BDE98E /* share */ = {isa = PBXFileReference; lastKnownFileType = folder; name = share; path = ../../Root/share; sourceTree = "<group>"; };
 		F450F26E25BA3F5700BDE98E /* iOCR.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = iOCR.xcconfig; path = ../iOCR.xcconfig; sourceTree = "<group>"; };
 		F4F4DE3A25B8E0970062BB04 /* iOCR-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOCR-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4F4DE3D25B8E0970062BB04 /* iOCR_iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOCR_iOSApp.swift; sourceTree = "<group>"; };
@@ -73,9 +72,9 @@
 		F4F4DE3125B8E0970062BB04 = {
 			isa = PBXGroup;
 			children = (
+				F439B40A26A8BFA4004608AD /* tessdata */,
 				F450F24C25BA3C9400BDE98E /* Assets.xcassets */,
 				F450F26E25BA3F5700BDE98E /* iOCR.xcconfig */,
-				F450F25125BA3CBA00BDE98E /* share */,
 				F4F4DE3C25B8E0970062BB04 /* iOCR-iOS */,
 				F4F4DE4E25B8E0970062BB04 /* iOCR-iOSTests */,
 				F4F4DE3B25B8E0970062BB04 /* Products */,
@@ -225,10 +224,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F450F25225BA3CBA00BDE98E /* share in Resources */,
-				F450F26F25BA3F5700BDE98E /* iOCR.xcconfig in Resources */,
 				F450F24D25BA3C9400BDE98E /* Assets.xcassets in Resources */,
 				F4F4DE4525B8E0970062BB04 /* Preview Assets.xcassets in Resources */,
+				F439B40B26A8BFA4004608AD /* tessdata in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

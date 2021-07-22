@@ -15,7 +15,7 @@ Like, this *easy*:
 
 If you want to learn more about those steps, check out this guide and...
 
-- [Learn about your environment](#the-project-environment): get to know this repo's layout
+- [Learn about the environment](#the-project-environment): get to know this repo's layout
 - [Build from source](#build-from-source): understand the arrangement of the libraries that make up Tesseract OCR; create a build chain; configure and build!
 - [Test Tesseract](#test-tesseract): quickly and directly get to using Tesseract by running a small test; also get target language recognition data
 - [Write an app](#write-an-app): wrap the Leptonica and Tesseract C-API's in Swift and make a very basic iPad app that shows some recognition features for traditional Chinese, English, and Japanese
@@ -50,7 +50,7 @@ iOCR/           iOCR.xcodeproj/ iOCRTests/
 
 The build scripts will also create new directories&mdash;**Downloads**, **Logs**, **Sources**&mdash;that will be populated with artifacts of the build process.
 
-Let's move on to what we're building, and how it goes together.
+Let's move on to what we're building, and see how it all comes together.
 
 ## Build from source
 
@@ -59,6 +59,12 @@ The *top-level libraries* needed to perform OCR are, in hierarchical order:
 - **tesseract**: the main library for performing OCR
   - **leptonica**: a library for managing image data and image manipulation
     - **libjpeg**, **libpng**, **libtiff**: the libraries for the individual image formats
+
+We've also configured Leptonica and Tesseract to build with zlib for image
+compression, which is specified with the `-lz` flag in their *config-make* files.
+Not apparent, but the build process also links against the C++ standard library.
+We need to consider these two dependencies later when we set up the Xcode
+project to use our build products.  I cover this in the [Xcode configuration walkthrough](iOCR/README.md).
 
 There is additional tooling to support the process of building the top-level libs, packages like **autoconf** and **automake** from GNU.
 
@@ -73,6 +79,7 @@ The final arrangement of the packages we settled on looks like:
 1. libtiff
 1. leptonica
 1. tesseract
+
 
 ### Starting the build
 
