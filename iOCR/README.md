@@ -134,7 +134,7 @@ Clicking on that I'm taken to the actual build-phase error, `Link DemoTests (arm
 Jumping straight to the bottom I can see the final error message:
 
 > ```none
-...
+> ...
 > Undefined symbols for architecture arm64:
 >   "_TessBaseAPICreate", referenced from:
 >       DemoTests.DemoTests.testExample() throws -> () in DemoTests.o
