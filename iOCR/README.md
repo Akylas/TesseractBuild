@@ -151,8 +151,8 @@ To make the symbols from our libraries available, we need to *link* them with th
 binary that clang is compiling. To do this, we need to tell clang two things:
 
 - **`-l` options:** which libraries to link with
-- **`-L` options:** where the compiler can find the object files for the
-  libraries (**.a files** in our case)
+- **`-L` options:** where the object files for our libraries (**.a files** in
+  our case) can be found
 
 Going back Xcode I read down from the top of error message and I can see two issues in
 the command-line arguments to clang:
@@ -169,9 +169,10 @@ string of values:
 > `-ljpeg-sim -ltesseract-sim -lpng16-sim -ltiff-sim -llept-sim`
 
 This repo's build process creates library files for the three current frameworks
-in Xcode: iOS, macOS, and Simulator.  Since I only need this to run in the
-simulator, I choose the `-sim` versions of our library files.  I'll cover
-configuring Xcode to work with all frameworks at the end of this guide.
+in Xcode: iOS, macOS, and Simulator.  The test doesn't use the Simulator, but
+the build phase is targeting a simulated device, and the build phase has to run
+before the test. So, I choose the `-sim` versions of our library files.  I'll
+cover configuring Xcode to work with all frameworks at the end of this guide.
 
 Now that the compiler knows which libraries to link with, I tell it where to
 find them.
