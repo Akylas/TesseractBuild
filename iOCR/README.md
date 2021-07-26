@@ -82,11 +82,11 @@ class DemoTests: XCTestCase {
 This test needs an image to perform OCR on, I'll add that to the project Assets
 folder with the name **test_jpn**:
 
-![vertical Japanese text](../Notes/static/Xcode-config/test_jpn.png)
+<img src="../Notes/static/Xcode-config/test_jpn.png"></img>
 
 Looking at my entire project, and the project settings overview:
 
-![Xcode project and settings](../Notes/static/Xcode-config/project_overview.png)
+<img style="width: 50%" src="../Notes/static/Xcode-config/project_overview.png"></img>
 
 ## Build errors
 
@@ -118,7 +118,7 @@ In project settings:
     can see when you double-click the value and an extra dialog pops up, like in
     the screenshot below).
 
-![import settings](../Notes/static/Xcode-config/import_settings.png)
+<img style="width: 50%" src="../Notes/static/Xcode-config/import_settings.png"></img>
 
 Clean the build folder, <kbd>&#x21e7; &#x2318; K</kbd>, and re-run the unit
 test, <kbd>&#x2318; U</kbd>, and I've cleared this error.
@@ -186,7 +186,7 @@ For my system, this looks like:
 
 You can also find both settings by searching for just "linker ":
 
-![linker settings](../Notes/static/Xcode-config/linker_settings.png)
+<img style="width: 50%" src="../Notes/static/Xcode-config/linker_settings.png"></img>
 
 Clean the build folder, <kbd>&#x21e7; &#x2318; K</kbd>, and re-run the unit
 test, <kbd>&#x2318; U</kbd>, and I'm still getting an 'undefined symbol' error.
@@ -208,7 +208,7 @@ In project settings:
 1. click the **+** (plus-sign) button
 1. search for and add, **libz.tbd** and **libc++.tbd**
 
-![link binary with libraries](../Notes/static/Xcode-config/link_binary_with_libraries.png)
+<img style="width: 50%" src="../Notes/static/Xcode-config/link_binary_with_libraries.png"></img>
 
 Clean the build folder, <kbd>&#x21e7; &#x2318; K</kbd>, re-run the test,
 <kbd>&#x2318; U</kbd>, and it builds! But then fails during the test.
@@ -261,7 +261,7 @@ folder to the project the target for the Demo was checked, so it should be
 bundled, and I confirm this by checking the Build Phases for the app's Demo
 target:
 
-![bundle resources](../Notes/static/Xcode-config/bundle_resources.png)
+<img style="width: 50%" src="../Notes/static/Xcode-config/bundle_resources.png"></img>
 
 You might also notice in that screenshot that **Link Binary with Libraries** is
 empty, **(0 items)**, so I'll also need to add libc++ and libz to this target as
@@ -306,7 +306,7 @@ ContentView:
 
 1. I changed the *active scheme* to **My Mac (Designed for iPad)**, which really means "an iOS device" (because my Mac happens to have Apple Silicon which can run apps make for iPad):
 
-    ![active scheme: my Mac](../Notes/static/Xcode-config/active_scheme.png)
+    <img style="width: 50%" src="../Notes/static/Xcode-config/active_scheme.png"><img>
 
 1. I try to build and get this error:
 
@@ -323,7 +323,7 @@ Simulator, and add libs for iOS:
 
 and I have the following settings:
 
-![linker flags multiple frameworks](../Notes/static/Xcode-config/other_linker_flags_multiple.png)
+<img style="width: 50%" src="../Notes/static/Xcode-config/other_linker_flags_multiple.png"></img>
 
 Clean the build folder, <kbd>&#x21e7; &#x2318; K</kbd>, run the app in the
 Simulator, <kbd>&#x2318; R</kbd>, and I see a print statement with the recognized text!
@@ -351,7 +351,9 @@ for even less manual configuration.
 To use the xcconfig file in Xcode:
 
 1. drag-drop it into the project, I used these options:
-    ![copy xcconfig options](../Notes/static/Xcode-config/copy_xcconfig_options.png)
+
+    <img style="width: 50%" src="../Notes/static/Xcode-config/copy_xcconfig_options.png"></img>
+
     <!--
     - **Destination:** ✓ Copy items if needed
     - **Added folders:**
@@ -361,7 +363,11 @@ To use the xcconfig file in Xcode:
         - [x] Demo
         - [x] DemoTests
     -->
+
 1. in project settings, **Project** &rarr; **Demo** &rarr; **Info**
+
 1. expand **Configurations**, and for **Debug** and **Release**...
+
     1. pick **iOCR** for each target from the drop-down under **Based on Configuration File**:
-        ![select configuration](../Notes/static/Xcode-config/select_configurations.png)
+
+        <img style="width: 50%" src="../Notes/static/Xcode-config/select_configurations.png"></img>
