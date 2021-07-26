@@ -267,7 +267,7 @@ You might also notice in that screenshot that **Link Binary with Libraries** is
 empty, **(0 items)**, so I'll also need to add libc++ and libz to this target as
 well.
 
-## Bonus: configuring for multiple frameworks
+### Configuring for multiple frameworks
 
 We got the project to build and test for Simulator, but what about other
 frameworks?
@@ -284,7 +284,7 @@ ContentView:
     import libleptonica
     import libtesseract
     ...
-    ..
+    ...
     struct ContentView: View {
         var body: some View {
             Text("Hello, world!")
@@ -298,8 +298,8 @@ ContentView:
 
                     // Init Tesseract and recognize
                     let tessAPI = TessBaseAPICreate()!
-    ...
-    ...
+                    ...
+                    ...
                     let txt = TessResultIteratorGetUTF8Text(iterator, RIL_TEXTLINE)!
                     print(String(cString:txt))  // Hello, 世界
     ```
@@ -313,12 +313,13 @@ ContentView:
     > ❌ In /Users/uname/develop/TesseractBuild/Root/lib/libtesseract-sim.a(libtesseract_api_la-capi.o), building for iOS, but linking in object file (/Users/uname/develop/TesseractBuild/Root/lib/libtesseract-sim.a(libtesseract_api_la-capi.o)) built for iOS Simulator, for architecture arm64
 
 Xcode still only knows about the libraries built for Simulator up to this point.
-I now need to specify that libraries I'm already using are for the Simulator, and add libs for iOS:
+I now need to specify that the libraries I've already configured are for the
+Simulator, and add libs for iOS:
 
 1. I expand the configuration I already made for **OTHER_LDFLAGS**
-1. change that framework to **Any iOS Simulator SDK**
+1. change that framework from **Any Architecture | Any SDK** to **Any iOS Simulator SDK**
 1. add a new configuration for **Any iOS SDK**
-1. copy-paste the linker flags, changing `-sim` to `-ios`
+1. copy-paste the linker flags between the two, changing `-sim` to `-ios`
 
 and I have the following settings:
 
@@ -329,7 +330,7 @@ Simulator, <kbd>&#x2318; R</kbd>, and I see a print statement with the recognize
 
 > "Hello, 世界"
 
-### xcconfig
+#### xcconfig
 
 Doing this manually in Xcode might get cumbersome for 3 frameworks for Debug and
 Release, and it might be nice to commit this configuration outside of the
