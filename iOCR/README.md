@@ -154,7 +154,7 @@ binary that clang is compiling. To do this, we need to tell clang two things:
 - **`-L` options:** where the object files for our libraries (**.a files** in
   our case) can be found
 
-Going back Xcode I read down from the top of error message and I can see two issues in
+Going back Xcode I read down from the top of the error message and I can see two issues in
 the command-line arguments to clang:
 
 - there are no `-l` options, so it doesn't know about our libraries
@@ -169,10 +169,11 @@ string of values:
 > `-ljpeg-sim -ltesseract-sim -lpng16-sim -ltiff-sim -llept-sim`
 
 This repo's build process creates library files for the three current frameworks
-in Xcode: iOS, macOS, and Simulator.  The test doesn't use the Simulator, but
-the build phase is targeting a simulated device, and the build phase has to run
-before the test. So, I choose the `-sim` versions of our library files.  I'll
-cover configuring Xcode to work with all frameworks at the end of this guide.
+in Xcode: iOS, macOS, and Simulator.  In Xcode, tests must be run on a *concrete
+device*, so the libraries the test is compiled with must match the targeted
+device type.  Since I'm running the test on the simulator, I chose the `-sim`
+versions of our library files.  I'll cover configuring Xcode to work with all
+frameworks at the end of this guide.
 
 Now that the compiler knows which libraries to link with, I tell it where to
 find them.
@@ -202,6 +203,7 @@ libraries, so I just have to add them to the project.
 
 In project settings:
 
+1. select **DemoTests** under **TARGETS**
 1. select **Build Phases** and expand **Link Binary with Libraries**
 1. click the **+** (plus-sign) button
 1. search for and add, **libz.tbd** and **libc++.tbd**
@@ -226,8 +228,14 @@ Looking at the debug messages from lldb, I see:
 > Tesseract couldn't load any languages!
 > ```
 
-I specified the `trainedDataFolder` in the test, but the API appears to be
-looking for the language data file where it found the library's .a file.  So
+I specified the `trainedDataFolder` in the test:
+
+```swift
+let trainedDataFolder = Bundle.main.path(forResource: "tessdata", ofType: nil, inDirectory: ".")
+```
+
+but haven't brought it into the project yet, and now the API appears to be
+looking for the language data file where the library's .a file is located.  So
 I'll add the folder as a reference to the project.
 
 1. Right-click **Demo** at the top of Project navigator &rarr; **Add Files to "Demo"...**
@@ -238,11 +246,121 @@ I'll add the folder as a reference to the project.
         - [x] Demo
         - [ ] DemoTests
 
-<kbd>&#x2318; U</kbd>, and the test passes!
+<kbd>&#x2318; U</kbd>, and ✅, the test passes!
 
-I'm not sure of the relationship between the built app and the test, but I don't
-need to target DemoTests for the test.  For the app, though, the Assets and tessdata
-folders must target Demo, and I confirm they'll be copied/bundled with the
-app by checking the Build Phases for the app's Demo target:
+## Wrap-up
+
+When I added the tessdata folder to the project, I intentionally left the
+DemoTests target unchecked to show that the folder needs to just exist in the
+project for Xcode to find and use it (for the test)&mdash;it doesn't need to be
+a part of the build configuration.
+
+But to do OCR in an app, the tessdata needs to be bundled with the app during
+the build, and the special Assets folder with the image, too.  When I added the
+folder to the project the target for the Demo was checked, so it should be
+bundled, and I confirm this by checking the Build Phases for the app's Demo
+target:
 
 ![bundle resources](../Notes/static/Xcode-config/bundle_resources.png)
+
+You might also notice in that screenshot that **Link Binary with Libraries** is
+empty, **(0 items)**, so I'll also need to add libc++ and libz to this target as
+well.
+
+## Bonus: configuring for multiple frameworks
+
+We got the project to build and test for Simulator, but what about other
+frameworks?
+
+To highlight how to make the project work with iOS, macOS, or Simulator, I'm
+going to extend the Demo app I've already created.  We need to get the OCR
+libraries into the iOS app and try to build and run it.
+
+1. I added the `import` statements for **libleptonica** and **libtesseract** and copied
+all the OCR code from the test into the `onAppear()` modifier of the default
+ContentView:
+
+    ```swift
+    import libleptonica
+    import libtesseract
+    ...
+    ..
+    struct ContentView: View {
+        var body: some View {
+            Text("Hello, world!")
+                .padding()
+                .onAppear {
+                    // UIImage to Leptonica Pix
+                    let imgData = UIImage(named: "test_jpn")!.pngData()! as NSData
+                    let rawPointer = imgData.bytes
+                    let uint8Pointer = rawPointer.assumingMemoryBound(to: UInt8.self)
+                    let image = pixReadMem(uint8Pointer, imgData.count)
+
+                    // Init Tesseract and recognize
+                    let tessAPI = TessBaseAPICreate()!
+    ...
+    ...
+                    let txt = TessResultIteratorGetUTF8Text(iterator, RIL_TEXTLINE)!
+                    print(String(cString:txt))  // Hello, 世界
+    ```
+
+1. I changed the *active scheme* to **My Mac (Designed for iPad)**, which really means "an iOS device" (because my Mac happens to have Apple Silicon which can run apps make for iPad):
+
+    ![active scheme: my Mac](../Notes/static/Xcode-config/active_scheme.png)
+
+1. I try to build and get this error:
+
+    > ❌ In /Users/uname/develop/TesseractBuild/Root/lib/libtesseract-sim.a(libtesseract_api_la-capi.o), building for iOS, but linking in object file (/Users/uname/develop/TesseractBuild/Root/lib/libtesseract-sim.a(libtesseract_api_la-capi.o)) built for iOS Simulator, for architecture arm64
+
+Xcode still only knows about the libraries built for Simulator up to this point.
+I now need to specify that libraries I'm already using are for the Simulator, and add libs for iOS:
+
+1. I expand the configuration I already made for **OTHER_LDFLAGS**
+1. change that framework to **Any iOS Simulator SDK**
+1. add a new configuration for **Any iOS SDK**
+1. copy-paste the linker flags, changing `-sim` to `-ios`
+
+and I have the following settings:
+
+![linker flags multiple frameworks](../Notes/static/Xcode-config/other_linker_flags_multiple.png)
+
+Clean the build folder, <kbd>&#x21e7; &#x2318; K</kbd>, run the app in the
+Simulator, <kbd>&#x2318; R</kbd>, and I see a print statement with the recognized text!
+
+> "Hello, 世界"
+
+### xcconfig
+
+Doing this manually in Xcode might get cumbersome for 3 frameworks for Debug and
+Release, and it might be nice to commit this configuration outside of the
+project, so I made an xcconfig file which is used by the iOCR project:
+
+```ini
+ROOT = $(PROJECT_DIR)/../../Root
+SWIFT_INCLUDE_PATHS = $(ROOT)/include/**
+LIBRARY_SEARCH_PATHS = $(ROOT)/lib/**
+OTHER_LDFLAGS[sdk=iphoneos*] = -ljpeg-ios -llept-ios -lpng16-ios -ltesseract-ios -ltiff-ios
+OTHER_LDFLAGS[sdk=iphonesimulator*] = -ljpeg-sim -ltesseract-sim -lpng16-sim -ltiff-sim -llept-sim
+OTHER_LDFLAGS[sdk=macosx*] = -ljpeg-macos -ltesseract-macos -lpng16-macos -ltiff-macos -llept-macos
+```
+
+It also has the **SWIFT_INCLUDE_PATHS** and **LIBRARY_SEARCH_PATHS** variables
+for even less manual configuration.
+
+To use the xcconfig file in Xcode:
+
+1. drag-drop it into the project, I used these options:
+    ![copy xcconfig options](../Notes/static/Xcode-config/copy_xcconfig_options.png)
+    <!--
+    - **Destination:** ✓ Copy items if needed
+    - **Added folders:**
+        - [x] Create groups
+        - [ ] Create folder references
+    - **Add to targets:**
+        - [x] Demo
+        - [x] DemoTests
+    -->
+1. in project settings, **Project** &rarr; **Demo** &rarr; **Info**
+1. expand **Configurations**, and for **Debug** and **Release**...
+    1. pick **iOCR** for each target from the drop-down under **Based on Configuration File**:
+        ![select configuration](../Notes/static/Xcode-config/select_configurations.png)
