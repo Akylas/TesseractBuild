@@ -13,7 +13,7 @@ fi
 # PLATFORM='iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk'
 # PLATFORM_MIN_VERSION='-miphoneos-version-min=11.0'
 
-name=$1    # leptonica-1.80.0
+name=$1    # leptonica-1.82.0
 os_arch=$2 # ios_arm64
 
 print -n "$os_arch: "

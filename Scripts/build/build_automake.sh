@@ -29,16 +29,16 @@ if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
   exit 0
 fi
 
-name='automake-1.16'
+name='automake-1.16.5'
 
 print "\n======== $name ========"
 
 if {
   [ -f $ROOT/bin/automake ] &&
     version=$($ROOT/bin/automake --version) &&
-    [[ $version == *'1.16'* ]]
+    [[ $version == *'1.16.5'* ]]
 }; then
-  print "Skipped build, found $ROOT/bin/automake w/version 1.16"
+  print "Skipped build, found $ROOT/bin/automake w/version 1.16.5"
   exit 0
 fi
 

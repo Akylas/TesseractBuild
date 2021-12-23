@@ -32,16 +32,16 @@ if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
   exit 0
 fi
 
-name='autoconf-2.69'
+name='autoconf-2.71'
 
 print "\n======== $name ========"
 
 if {
   [ -f $ROOT/bin/autoconf ] &&
     version=$($ROOT/bin/autoconf --version) &&
-    [[ $version == *'2.69'* ]]
+    [[ $version == *'2.71'* ]]
 }; then
-  print "Skipped build, found $ROOT/bin/autoconf w/version 2.69"
+  print "Skipped build, found $ROOT/bin/autoconf w/version 2.71"
   exit 0
 fi
 

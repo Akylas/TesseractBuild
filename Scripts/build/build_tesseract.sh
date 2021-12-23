@@ -23,13 +23,13 @@ if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
 fi
 
 # Check out this page for version updates: https://tesseract-ocr.github.io/tessdoc/
-name='tesseract-4.1.1'
+name='tesseract-5.0.0'
 
 print "\n======== $name ========"
 
 # --  Download / Extract  -----------------------------------------------------
 
-targz='4.1.1.tar.gz'
+targz='5.0.0.tar.gz'
 url="https://github.com/tesseract-ocr/tesseract/archive/$targz"
 
 download $name $url $targz || exit 1

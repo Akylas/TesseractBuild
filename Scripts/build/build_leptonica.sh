@@ -22,13 +22,13 @@ if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
   exit 0
 fi
 
-name='leptonica-1.80.0'
+name='leptonica-1.82.0'
 print "\n======== $name ========"
 
 # --  Download / Extract  -----------------------------------------------------
 
 targz=$name.tar.gz
-url="https://github.com/DanBloomberg/leptonica/releases/download/1.80.0/$targz"
+url="https://github.com/DanBloomberg/leptonica/releases/download/1.82.0/$targz"
 
 download $name $url $targz || exit 1
 extract $name $targz || exit 1
