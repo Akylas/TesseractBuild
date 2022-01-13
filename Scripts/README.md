@@ -1,5 +1,39 @@
 # Miscellaneous
 
+## Tesseract 5.0.0, NEON & arm64
+
+Just updated to Tesseract 5.0.0, and now I'm getting this error from build_all.sh:
+
+```none
+======== tesseract-5.0.0 ========
+Downloading... done.
+Extracting... done.
+Preconfiguring... done.
+--**!!**-- Overriding $SOURCES/tesseract-5.0.0/config/config.sub
+ios_arm64: configuring... done, making... ERROR running make
+ERROR see /Users/zyoung/develop/xcode/TesseractBuild/Logs/tesseract-5.0.0/4_make_ios_arm64.err for more details
+```
+
+Looking in that file, I see this error:
+
+```none
+Undefined symbols for architecture arm64:
+  "tesseract::IntSimdMatrix::intSimdMatrixNEON", referenced from:
+      tesseract::SIMDDetect::SIMDDetect() in libtesseract.a(libtesseract_la-simddetect.o)
+      tesseract::SIMDDetect::Update() in libtesseract.a(libtesseract_la-simddetect.o)
+  "tesseract::DotProductNEON(float const*, float const*, int)", referenced from:
+      tesseract::SIMDDetect::SIMDDetect() in libtesseract.a(libtesseract_la-simddetect.o)
+      tesseract::SIMDDetect::Update() in libtesseract.a(libtesseract_la-simddetect.o)
+ld: symbol(s) not found for architecture arm64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+```
+
+As a reminder to myself, I'm reading about a similar error I experienced inside Xcode, that's documented in [iOCR/README.md](../iOCR/README.md#undefined-symbol)
+
+Well, that was due to my `config.sub` hack from earlier.  Autotools have caught up, I removed my bogus `arm-apple-darwin64` and config now corrrectly reports the build system as `aarch64-apple-darwin21.1.0`.
+
+And now... back to the `-lrt` error, from below.
+
 ## Problem with -lrt lib in Tesseract make
 
 Main problem is:

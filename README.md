@@ -512,7 +512,3 @@ export TARGET='arm64-apple-ios14.3'
 ```
 
 is the fix I needed.
-
--ljpeg-ios -llept-ios -lpng16-ios -ltesseract-ios -ltiff-ios
--ljpeg-macos -ltesseract-macos -lpng16-macos -ltiff-macos -llept-macos
--ljpeg-sim -ltesseract-sim -lpng16-sim -ltiff-sim -llept-sim
