@@ -1,4 +1,19 @@
-# Miscellaneous
+# Building Open Source (yeck!!)
+
+## Targeting Apple
+
+LibJPEG, LibPNG, and LibTIFF all build fine.  Leptonica and Tesseract have struggled lately because, as I see it, they have "pre-configure" scripts, and something in that process is not aware of the latest names ("triples") 
+
+-   **AArch64** is the ["ARM 64-bit Architecture"](https://developer.apple.com/documentation/xcode/writing-arm64-code-for-apple-platforms).
+-   Target for AArch64 looks like this in Xcode:
+
+    ```shell
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -target arm64-apple-ios15.2-simulator
+    ```
+
+## config.sub
+
+**config.sub** is a script from GNU that produces a triple based on the target passed in, like 'arm64-apple-ios15.2-simulator'
 
 ## Tesseract 5.0.0, NEON & arm64
 
