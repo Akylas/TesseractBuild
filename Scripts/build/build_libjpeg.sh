@@ -13,13 +13,14 @@ fi
 
 # Clean
 if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
-  FILES=$(find $ROOT \( -name '*jpeg*' -o -name '*jpg*' -o -name 'j*.h' \) -print)
+  FILES=("${(@f)$(find $ROOT \( -name '*jpeg*' -o -name '*jpg*' -o -name 'j*.h' \) -print)}")
   if [[ -z $FILES ]]; then
-    echo "$scriptname: clean"
+    echo "$scriptname: already clean."
   else
     # Loop over files, removing, then testing if the parent-dir is empty
     for FILE in $FILES; do
-      rm $FILE && echo "Deleted $FILE"
+      print -n "Deleting $FILE ..."
+      rm $FILE && print ' done.'
       DIR=${FILE%/*}  # substitue filename with nothing
       rmdir $DIR 2>/dev/null && echo "Deleted $DIR"
     done
@@ -27,13 +28,13 @@ if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
   exit 0
 fi
 
-name='jpegsrc.v9d'
+name='jpeg.v9d'
 
 print "\n======== $name ========"
 
 # --  Download / Extract  -----------------------------------------------------
 
-targz=$name.tar.gz
+targz='jpegsrc.v9d.tar.gz'
 url="http://www.ijg.org/files/$targz"
 dirname='jpeg-9d'
 
@@ -43,31 +44,30 @@ extract $name $targz $dirname
 # --  Config / Make / Install  ------------------------------------------------
 
 # Special override till GNU config catches up with new Apple targets
-print -- "--**!!**-- Overriding \$SOURCES/$dirname/config.sub"
-cp $PROJECTDIR/config_echo.sub $SOURCES/$dirname/config.sub
-
+print -- "--**!!**-- Overriding \$SOURCES/$dirname/config.sub with $PROJECTDIR/config.sub.echo"
+cp $PROJECTDIR/config.sub.echo $SOURCES/$dirname/config.sub
 
 # ios_arm64
 export ARCH='arm64'
-export TARGET='arm64-apple-ios14.3'
+export TARGET='arm64-apple-ios15.2'
 export PLATFORM='iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk'
-export PLATFORM_MIN_VERSION='-miphoneos-version-min=14.3'
+export PLATFORM_MIN_VERSION='-miphoneos-version-min=15.2'
 
 zsh $parentdir/config-make-install_libjpeg.sh $name 'ios_arm64' $dirname || exit 1
 
 # ios_arm64_sim
 export ARCH='arm64'
-export TARGET='arm64-apple-ios14.3-simulator'
+export TARGET='arm64-apple-ios15.2-simulator'
 export PLATFORM='iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk'
-export PLATFORM_MIN_VERSION='-miphoneos-version-min=14.3'
+export PLATFORM_MIN_VERSION='-miphoneos-version-min=15.2'
 
 zsh $parentdir/config-make-install_libjpeg.sh $name 'ios_arm64_sim' $dirname || exit 1
 
 # ios_x86_64_sim
 export ARCH='x86_64'
-export TARGET='x86_64-apple-ios14.3-simulator'
+export TARGET='x86_64-apple-ios15.2-simulator'
 export PLATFORM='iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk'
-export PLATFORM_MIN_VERSION='-mios-simulator-version-min=14.3'
+export PLATFORM_MIN_VERSION='-mios-simulator-version-min=15.2'
 
 zsh $parentdir/config-make-install_libjpeg.sh $name 'ios_x86_64_sim' $dirname || exit 1
 
@@ -75,7 +75,7 @@ zsh $parentdir/config-make-install_libjpeg.sh $name 'ios_x86_64_sim' $dirname ||
 export ARCH='x86_64'
 export TARGET='x86_64-apple-macos12.0'
 export PLATFORM='MacOSX.platform/Developer/SDKs/MacOSX.sdk'
-export PLATFORM_MIN_VERSION='-mmacosx-version-min=10.13'
+export PLATFORM_MIN_VERSION='-mmacosx-version-min=12.0'
 
 zsh $parentdir/config-make-install_libjpeg.sh $name 'macos_x86_64' $dirname || exit 1
 
@@ -83,7 +83,7 @@ zsh $parentdir/config-make-install_libjpeg.sh $name 'macos_x86_64' $dirname || e
 export ARCH='arm64'
 export TARGET='arm64-apple-macos12.0'
 export PLATFORM='MacOSX.platform/Developer/SDKs/MacOSX.sdk'
-export PLATFORM_MIN_VERSION='-mmacosx-version-min=11.0'
+export PLATFORM_MIN_VERSION='-mmacosx-version-min=12.0'
 
 zsh $parentdir/config-make-install_libjpeg.sh $name 'macos_arm64' $dirname || exit 1
 
