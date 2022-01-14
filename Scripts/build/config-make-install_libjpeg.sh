@@ -37,7 +37,6 @@ if [ ! -d /Applications/Xcode.app/Contents/Developer/Platforms/$PLATFORM ]; then
 fi
 
 cflags=(
-  "-arch $ARCH"
   "-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/$PLATFORM"
   $PLATFORM_MIN_VERSION
   "--target=$TARGET"

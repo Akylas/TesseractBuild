@@ -11,13 +11,18 @@ if ! source $parentdir/project_environment.sh; then
   exit 1
 fi
 
+# Clean
 if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
-  deleted=$(find $ROOT -name '*jpeg*' -prune -print -exec rm -rf {} \;)
-  if [[ -n $deleted ]]; then
-    echo "$scriptname: deleted:"
-    echo $deleted
-  else
+  FILES=$(find $ROOT \( -name '*jpeg*' -o -name '*jpg*' -o -name 'j*.h' \) -print)
+  if [[ -z $FILES ]]; then
     echo "$scriptname: clean"
+  else
+    # Loop over files, removing, then testing if the parent-dir is empty
+    for FILE in $FILES; do
+      rm $FILE && echo "Deleted $FILE"
+      DIR=${FILE%/*}  # substitue filename with nothing
+      rmdir $DIR 2>/dev/null && echo "Deleted $DIR"
+    done
   fi
   exit 0
 fi
@@ -39,7 +44,7 @@ extract $name $targz $dirname
 
 # Special override till GNU config catches up with new Apple targets
 print -- "--**!!**-- Overriding \$SOURCES/$dirname/config.sub"
-cp $PROJECTDIR/config.sub $SOURCES/$dirname/config.sub
+cp $PROJECTDIR/config_echo.sub $SOURCES/$dirname/config.sub
 
 
 # ios_arm64
@@ -68,7 +73,7 @@ zsh $parentdir/config-make-install_libjpeg.sh $name 'ios_x86_64_sim' $dirname ||
 
 # macos_x86_64
 export ARCH='x86_64'
-export TARGET='x86_64-apple-macos10.13'
+export TARGET='x86_64-apple-macos12.0'
 export PLATFORM='MacOSX.platform/Developer/SDKs/MacOSX.sdk'
 export PLATFORM_MIN_VERSION='-mmacosx-version-min=10.13'
 
@@ -76,7 +81,7 @@ zsh $parentdir/config-make-install_libjpeg.sh $name 'macos_x86_64' $dirname || e
 
 # macos_arm64
 export ARCH='arm64'
-export TARGET='arm64-apple-macos11.0'
+export TARGET='arm64-apple-macos12.0'
 export PLATFORM='MacOSX.platform/Developer/SDKs/MacOSX.sdk'
 export PLATFORM_MIN_VERSION='-mmacosx-version-min=11.0'
 
