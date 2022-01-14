@@ -1,0 +1,20 @@
+diff --git a/config.sub.latest b/config.sub.latest
+index dba16e8..04fd40e 100755
+--- a/config.sub.latest
++++ b/config.sub.latest
+@@ -127,6 +127,15 @@ $1
+ EOF
+ IFS=$saved_IFS
+ 
++# Erase the field/term/word "simulator", which will later cause an error, like:
++#    "Invalid configuration `arm64-apple-ios15.2-simulator': Kernel `ios15.2' not known to work with OS `simulator'."
++case $1 in
++	*-*-*-*)
++		set -- $field1-$field2-$field3
++		field4=
++		;;
++esac
++
+ # Separate into logical components for further validation
+ case $1 in
+ 	*-*-*-*-*)

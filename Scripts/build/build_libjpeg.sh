@@ -43,9 +43,9 @@ extract $name $targz $dirname
 
 # --  Config / Make / Install  ------------------------------------------------
 
-# Special override till GNU config catches up with new Apple targets
-print -- "--**!!**-- Overriding \$SOURCES/$dirname/config.sub with $PROJECTDIR/config.sub.echo"
-cp $PROJECTDIR/config.sub.echo $SOURCES/$dirname/config.sub
+# Legit Apple targets for the Simulator cannot be parsed by legit config.sub
+print -- "--**!!**-- Overriding \$SOURCES/$dirname/config.sub with $PROJECTDIR/config.sub.patched"
+cp $PROJECTDIR/config.sub.patched $SOURCES/$dirname/config.sub || { echo "Error: could not find $PROJECTDIR/config.sub.patched"; exit 1 }
 
 # ios_arm64
 export ARCH='arm64'
