@@ -86,6 +86,11 @@ print -n 'configuring... '
 xl $name "3_config_$os_arch" ../configure $config_flags || exit 1
 print -n 'done, '
 
+print -n 'overriding Makefile... '
+sed 's/am__append_46 = -lrt/# am__append_46 = -lrt/' Makefile > tmp || { echo "Error: could not sed/comment-out '-lrt' flag to tmp file"; exit 1 }
+mv tmp Makefile || { echo 'Error: could not move tmp file back on top of Makefile'; exit 1 }
+print -n 'done, '
+
 print -n 'making... '
 xl $name "4_clean_$os_arch" make clean || exit 1
 xl $name "4_make_$os_arch" make || exit 1
