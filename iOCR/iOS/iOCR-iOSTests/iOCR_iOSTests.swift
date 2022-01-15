@@ -116,7 +116,7 @@ class iOCRRecognizerTests: XCTestCase {
                                     tessPSM: PSM_SINGLE_BLOCK, tessPIL: RIL_BLOCK)
         let got = recognizer.getAllText()
 
-        // Note that the 4th-to-last line is 'foruseina'; should be 'for use in a'
+        // Note that the 4th-to-last line is 'foruse ina'; should be 'for use in a'
         let want = """
 Welcome to
 Hexdreamer's
@@ -130,7 +130,7 @@ specifically
 Tesseract
 OCR, into an
 Xcode project
-foruseina
+foruse ina
 dream iOS
 manga-reader
 app.

@@ -31,8 +31,9 @@ for langfile in $langfiles; do
 
   print -n "downloading $langfile..."
   curl -L -f -s \
-    https://github.com/tesseract-ocr/tessdata_best/raw/master/$langfile \
-    --output $TESSDATA_PREFIX/$langfile
+    https://github.com/tesseract-ocr/tessdata_best/raw/main/$langfile \
+    --output $TESSDATA_PREFIX/$langfile \
+    || { echo "Error: could not download https://github.com/tesseract-ocr/tessdata_best/raw/master/$langfile"; exit 1 }
   print 'done'
 done
 
