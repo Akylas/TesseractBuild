@@ -1,95 +1,53 @@
-# Building Open Source (yeck!!)
+# Building
 
-## Targeting Apple
+## Intractable issues
 
-LibJPEG, LibPNG, and LibTIFF all build fine.  Leptonica and Tesseract have struggled lately because, as I see it, they have "pre-configure" scripts, and something in that process is not aware of the latest names ("triples") 
+I've run into two main issues I can't really resolve and have resorted to hackery:
 
--   **AArch64** is the ["ARM 64-bit Architecture"](https://developer.apple.com/documentation/xcode/writing-arm64-code-for-apple-platforms).
--   Target for AArch64 looks like this in Xcode:
+-   GNU's config.sub and iOS Simulator
+-   This arcane `-lrt` linker flag for Tesseract
 
-    ```shell
-    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -target arm64-apple-ios15.2-simulator
-    ```
+### config.sub
 
-## config.sub
-
-**config.sub** is a script from GNU that produces a triple based on the target passed in, like 'arm64-apple-ios15.2-simulator'
-
-## Tesseract 5.0.0, NEON & arm64
-
-Just updated to Tesseract 5.0.0, and now I'm getting this error from build_all.sh:
-
-```none
-======== tesseract-5.0.0 ========
-Downloading... done.
-Extracting... done.
-Preconfiguring... done.
---**!!**-- Overriding $SOURCES/tesseract-5.0.0/config/config.sub
-ios_arm64: configuring... done, making... ERROR running make
-ERROR see /Users/zyoung/develop/xcode/TesseractBuild/Logs/tesseract-5.0.0/4_make_ios_arm64.err for more details
-```
-
-Looking in that file, I see this error:
-
-```none
-Undefined symbols for architecture arm64:
-  "tesseract::IntSimdMatrix::intSimdMatrixNEON", referenced from:
-      tesseract::SIMDDetect::SIMDDetect() in libtesseract.a(libtesseract_la-simddetect.o)
-      tesseract::SIMDDetect::Update() in libtesseract.a(libtesseract_la-simddetect.o)
-  "tesseract::DotProductNEON(float const*, float const*, int)", referenced from:
-      tesseract::SIMDDetect::SIMDDetect() in libtesseract.a(libtesseract_la-simddetect.o)
-      tesseract::SIMDDetect::Update() in libtesseract.a(libtesseract_la-simddetect.o)
-ld: symbol(s) not found for architecture arm64
-clang: error: linker command failed with exit code 1 (use -v to see invocation)
-```
-
-As a reminder to myself, I'm reading about a similar error I experienced inside Xcode, that's documented in [iOCR/README.md](../iOCR/README.md#undefined-symbol)
-
-Well, that was due to my `config.sub` hack from earlier.  Autotools have caught up, I removed my bogus `arm-apple-darwin64` and config now corrrectly reports the build system as `aarch64-apple-darwin21.1.0`.
-
-And now... back to the `-lrt` error, from below.
-
-## Problem with -lrt lib in Tesseract make
-
-Main problem is:
-
-```none
-warning: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib: archive library: .libs/libtesseract_opencl.a the table of contents is empty (no object file members in the library define global symbols)
-ld: library not found for -lrt
-clang: error: linker command failed with exit code 1 (use -v to see invocation)
-make[2]: *** [tesseract] Error 1
-make[1]: *** [all-recursive] Error 1
-make: *** [all] Error 2
-```
-
-This `-lrt` option is for an old library.  Searched online and the common solution for `ld: library not found for -lrt` and `clang: error: linker command failed with exit code 1 (use -v to see invocation)` is "take it out".
-
-The solution ended up being to have **config.sub** spit out `arm-apple-darwin64`, that way the **configure** script catches `*darwin*` as a host it expects and sets the correct `ADD_RT_*` flags:
+All the `configure` scripts for _top-level libraries_ run config.sub, which takes a target and produces "a validated and canonicalized configuration type", or, in practical terms:
 
 ```sh
-...
-*darwin*)
-  OPENCL_LIBS=""
-  OPENCL_INC=""
-  if false; then
-    ADD_RT_TRUE=
-    ADD_RT_FALSE='#'   # <-- I have no idea, logically (if false?), why this works, but this is line we want evaluated to avoid the RT flag
-  else
-    ADD_RT_TRUE='#'
-    ADD_RT_FALSE=
-  fi
-...
+./config.sub arm64-apple-ios15.2
+aarch64-apple-ios15.2
 ```
 
-The `TARGET` parameter remains like `arm64-apple-iphoneos14.3`.
+'arm64' was "canonicalized" to 'aarch64'.
 
-See the "--**!!**-- Overriding..." lines in the build scripts for the top-level libraries.
+That's fine, it doesn't affect the actual build and the flags/opts passed to Clang.  I'm not sure config.sub has any bearing on the built products.  But it's thoroughly a part of these C/C++ libraries, so there's no getting rid of it... and that's very relevant because I've found these two issues using config.sub:
 
-This is also documented in the Lessons Learned section in the main README.
+-   all the projects are using a dated version of config.sub
+-   even the latest config.sub, which does recognize iOS, doesn't recognize iOS-Simulator
 
-## Tesseract Version / Source
+```sh
+./config.sub arm64-apple-ios15.2-simulator
+Invalid configuration `arm64-apple-ios15.2-simulator': Kernel `ios15.2' not known to work with OS `simulator'.
+```
 
-Not the clearest to find, but we're using 4.1.1, and [the manual](https://tesseract-ocr.github.io/tessdoc/) has a link to the TARGZ file.
+My solution is to download the latest config.sub from GNU and, for now, patch in a hack that allows 'simulator' to be passed through by just cutting it out of the input argument.
+
+[$PROJECTDIR/Scripts/download_config.sub_and_patch.sh](./download_config.sub_and_patch.sh) handles those three steps.
+
+### `-lrt`
+
+Tesseract's `autogen.sh` or `configure` scripts are adding the linker flag for the RT library.  It's not needed for building in Darwin, and doesn't exist, so when when the flag is added the make/compilation fails when the lib is not found.
+
+I called it "arcane" earlier, based on this StackOverflow from 2019, [ld: library not found for -lrt](https://stackoverflow.com/a/47703372/246801):
+
+> BTW, removing -lrt should also fit for recent Linux distributions.
+
+I have spent hours in the autogen and (espeically) configure scripts trying to see where/how the (pre)configure process determines this is needed.  From everything I see and understand, configure correctly exists thinking this shouldn't be set, but it somehow it's (still) added to Makefile.
+
+My solution is to just comment out the line in the Makefile that adds the flag, after the configure step, but before the make step.  Tesseract's config-make-install script handles this:
+
+```sh
+sed 's/am__append_46 = -lrt/# am__append_46 = -lrt/' Makefile > tmp || { echo "Error: could not sed/comment-out '-lrt' flag to tmp file"; exit 1 }
+mv tmp Makefile || { echo 'Error: could not move tmp file back on top of Makefile'; exit 1 }
+```
 
 ## libtiff header
 
@@ -172,3 +130,12 @@ configure:2663: /Applications/Xcode.app/Contents/Developer/usr/bin/g++ -qversion
 clang: error: unknown argument '-qversion'; did you mean '--version'?
 clang: error: no input files
 ```
+
+## Miscelaneous links
+
+-   (https://kakyoism.github.io/2019/10/17/Build-a-GNU-Autotools-based-project-for-iOS-Part-1/)
+-   (https://stackoverflow.com/questions/22986302/compiling-libical-for-arm64-and-x86-64-for-ios)
+-   (https://www.gnu.org/software/gettext/manual/html_node/config_002eguess.html)
+-   (https://github.com/conan-io/conan/pull/6748)
+-   (https://github.com/react-native-community/discussions-and-proposals/issues/295)
+-   **AArch64** is the ["ARM 64-bit Architecture"](https://developer.apple.com/documentation/xcode/writing-arm64-code-for-apple-platforms).

@@ -43,9 +43,9 @@ extract $name $targz $dirname
 
 # --  Config / Make / Install  ------------------------------------------------
 
-# Legit Apple targets for the Simulator cannot be parsed by legit config.sub
-print -- "--**!!**-- Overriding \$SOURCES/$dirname/config.sub with $PROJECTDIR/config.sub.patched"
-cp $PROJECTDIR/config.sub.patched $SOURCES/$dirname/config.sub || { echo "Error: could not find $PROJECTDIR/config.sub.patched"; exit 1 }
+# Legit Apple targets for the Simulator cannot be parsed by legit config.sub, see Scripts/README.md
+print -- "--**!!**-- Overriding \$SOURCES/$dirname/config.sub with $SCRIPTSDIR/config.sub.patched"
+cp $SCRIPTSDIR/config.sub.patched $SOURCES/$dirname/config.sub || { echo "Error: could not find $SCRIPTSDIR/config.sub.patched"; exit 1 }
 
 # ios_arm64
 export ARCH='arm64'
