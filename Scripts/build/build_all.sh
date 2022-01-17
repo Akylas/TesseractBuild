@@ -21,6 +21,11 @@ if [[ -n $1 ]] && [[ $1 == 'clean-all' ]]; then
   exit 0
 fi
 
+# Duplicated from project_environment.sh because I want it to appear at the "top" of the build commands
+if ! [ -e $parentdir/../config.sub.patched ]; then
+  $parentdir/../download_config.sub_and_patch.sh || { echo 'Error: failed in calling download_config'; exit 1 }
+fi
+
 # Prereqs for configuring/building Leptonica & Tesseract
 zsh $parentdir/build_autoconf.sh || exit 1
 zsh $parentdir/build_automake.sh || exit 1

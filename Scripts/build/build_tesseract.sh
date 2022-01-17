@@ -45,6 +45,7 @@ print 'done.'
 # --  Config / Make / Install  ------------------------------------------------
 
 # Legit Apple targets for the Simulator cannot be parsed by legit config.sub, see Scripts/README.md
+checkConfigSub
 dirname=$name
 print -- "--**!!**-- Overriding \$SOURCES/$dirname/config/config.sub with $SCRIPTSDIR/config.sub.patched"
 cp $SCRIPTSDIR/config.sub.patched $SOURCES/$dirname/config/config.sub || { echo "Error: could not find $SCRIPTSDIR/config.sub.patched"; exit 1 }
