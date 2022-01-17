@@ -26,6 +26,12 @@ export TESSDATA_PREFIX=$ROOT/share/tessdata
 
 export PROMPT="(TBE) $PROMPT"
 
+# Ensure latest, patched config.sub is ready for config-make-install scripts
+if ! [ -e $SCRIPTSDIR/config.sub.patched ]; then
+  cd $SCRIPTSDIR || exit 1
+  ./download_config.sub_and_patch.sh || { echo 'Error: failed in calling download_config'; exit 1 }
+fi
+
 _exec() {
   # Try and execute a command, logging to itself to MASTER_CMDS, and exiting
   # w/an error if there's a failure.
