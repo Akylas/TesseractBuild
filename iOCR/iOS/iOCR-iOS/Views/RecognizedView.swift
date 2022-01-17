@@ -16,6 +16,11 @@ struct RecognizedView: View {
     public let caption: String
     public let recognizer: Recognizer
 
+    init(_ caption:String, _ recognizer:Recognizer) {
+        self.caption = caption
+        self.recognizer = recognizer
+    }
+
     var body: some View {
         let columns = [
             GridItem(.flexible(), spacing: 0, alignment: .top),
@@ -53,7 +58,6 @@ struct RecognizedView: View {
             } // VStack
 
         } // ZStack
-        .frame(width: 500, height: 650)
     }
 }
 
