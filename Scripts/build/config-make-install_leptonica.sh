@@ -80,7 +80,7 @@ print -n 'done, '
 
 print -n 'making... '
 xl $name "4_clean_$os_arch" make clean || exit 1
-xl $name "4_make_$os_arch" make || exit 1
+xl $name "4_make_$os_arch" make -j || exit 1
 print -n 'done, '
 
 print -n 'installing... '

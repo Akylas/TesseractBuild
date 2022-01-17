@@ -57,7 +57,7 @@ print -n 'done, '
 
 print -n 'making... '
 xl $name '3_clean_arm64' make clean || exit 1
-xl $name '3_make_arm64' make || exit 1
+xl $name '3_make_arm64' make -j || exit 1
 print -n 'done, '
 
 print -n 'installing... '
@@ -76,7 +76,7 @@ print -n 'done, '
 
 print -n 'making... '
 xl $name '3_clean_x86_64' make clean || exit 1
-xl $name '3_make_x86_64' make || exit 1
+xl $name '3_make_x86_64' make -j || exit 1
 print -n 'done, '
 
 print -n 'installing... '

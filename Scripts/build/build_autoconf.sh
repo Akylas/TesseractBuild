@@ -66,7 +66,7 @@ print -n 'done, '
 
 print -n 'making... '
 xl $name '3_clean_x86' make clean || exit 1
-xl $name '3_make_x86' make || exit 1
+xl $name '3_make_x86' make -j || exit 1
 print -n 'done, '
 
 print -n 'installing... '

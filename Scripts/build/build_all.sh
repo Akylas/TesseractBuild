@@ -31,11 +31,11 @@ zsh $parentdir/build_libtool.sh || exit 1
 
 # Libraries for Leptonica & Tesseract
 zsh $parentdir/build_libjpeg.sh || exit 1
-# zsh $parentdir/build_libpng.sh || exit 1
-# zsh $parentdir/build_libtiff.sh || exit 1
+zsh $parentdir/build_libpng.sh || exit 1
+zsh $parentdir/build_libtiff.sh || exit 1
 
 # Leptonica is final dependency for Tesseract
-# zsh $parentdir/build_leptonica.sh || exit 1
+zsh $parentdir/build_leptonica.sh || exit 1
 
 # The last library you need for Xcode
-# zsh $parentdir/build_tesseract.sh || exit 1
+zsh $parentdir/build_tesseract.sh || exit 1
