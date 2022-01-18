@@ -60,6 +60,6 @@ print -n 'done, '
 
 print -n 'installing... '
 xl $name "4_install_$os_arch" make install || exit 1
-print -n 'done, '
+print 'done.'
 
 validateBuiltLib $thisLib $ARCH || exit 1
