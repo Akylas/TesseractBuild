@@ -15,12 +15,11 @@ We started this project because we really wanted Japanese OCR in an iOS app.  Ap
 1. open `iOCR/iOS/iOCR-iOS.xcodeproj`
 1. run the **iOCR** target on an **iPad Pro 12.9-inch Simulator** and see that Chinese, English, and Japanese text are recognized in the app
 
-
-We always wanted you to be able to do something like this, too!, so as we went along we made this, _Our Guide to Building and Integrating C/C++ libs in Xcode_.
+We always wanted you to be able to do something like this, too!, so we made this, _Our Guide to Building and Integrating C/C++ libs in Xcode_.
 
 ## This Guide
 
-This Guide covers how we made this project/repo (the "build environment"), how to target builds for different frameworks and processor architectures, and finally import the libs into Xcode and use their C-API's with Swift.
+This Guide covers how we made this project/repo (the "build environment"), how to target builds for different frameworks and processor architectures, and finally how to import the libs into Xcode and use their C-API's with Swift.
 
 If you want to know more, read on to...
 
