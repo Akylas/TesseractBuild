@@ -14,7 +14,9 @@ scriptName=${thisAbsPath##*/}
 setEnvPath=$parentPath/../set_env.sh
 source $setEnvPath || { echo "ERROR could not source $setEnvPath"; exit 1 }
 
-# Clean
+
+# --  Clean  ------------------------------------------------------------------
+
 if [[ $1 == 'clean' ]]; then
   files=$(find $ROOT \( -name '*jpeg*' -o -name '*jpg*' -o -name 'j*.h' \) -print)
   clean $files || exit 1
@@ -120,5 +122,4 @@ print 'done.'
 
 xc mkdir -p $ROOT/include
 
-# Any set of headers is valid, just happened to pull from ios_arm64
 xc cp $ROOT/ios_arm64/include/j*.h $ROOT/include

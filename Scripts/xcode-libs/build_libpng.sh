@@ -14,7 +14,9 @@ scriptName=${thisAbsPath##*/}
 setEnvPath=$parentPath/../set_env.sh
 source $setEnvPath || { echo "ERROR could not source $setEnvPath"; exit 1 }
 
-# Clean
+
+# --  Clean  ------------------------------------------------------------------
+
 if [[ $1 == 'clean' ]]; then
   files=$(find $ROOT -name '*png*.*' -print)
   clean $files || exit 1

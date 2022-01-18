@@ -1,39 +1,25 @@
 #!/bin/zsh
 
+name=$1
+os_arch=$2
+dirname=$3
+
 thisAbsPath=${0:A}
 parentPath=${thisAbsPath%/*}
 
-if ! source $parentPath/../set_env.sh; then
-  echo "config-make-install_libtiff.sh: error sourcing $parentPath/../set_env.sh"
-  exit 1
-fi
+setEnvPath=$parentPath/../set_env.sh
+source $setEnvPath || { echo "ERROR could not source $setEnvPath"; exit 1 }
 
-# ARCH='arm64'
-# TARGET='arm-apple-darwin64'
-# PLATFORM='iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk'
-# PLATFORM_MIN_VERSION='-miphoneos-version-min=11.0'
-
-name=$1    # tiff-4.1.0
-os_arch=$2 # ios_arm64
 
 print -n "$os_arch: "
 
-# Verify libtiff.a is installed; requires pkglib is installed
-pkg_lib=$ROOT/$os_arch/lib/libtiff.a
-if {
-  [ -f $pkg_lib ] &&
-    info=$(lipo -info $pkg_lib) &&
-    [[ $info =~ 'Non-fat file' ]] &&
-    [[ $info =~ $ARCH ]]
-}; then
-  print "skipped config/make/install, found valid single-$ARCH-arch $pkg_lib"
-  exit 0
-fi
+# Use to verify a previous build and skip, or verify this build
+thisLib=$ROOT/$os_arch/lib/libtiff.a
 
-# Verify sysroot platform exists
-if [ ! -d /Applications/Xcode.app/Contents/Developer/Platforms/$PLATFORM ]; then
-  print "ERROR $PLATFORM does not exist; has the SDK been updated?"
-fi
+# Skip build if check returns w/0
+checkForXcodeLib $thisLib $ARCH && exit 0
+
+verifyPlatform || exit 1
 
 cflags=(
   "-arch $ARCH"
@@ -56,10 +42,11 @@ config_flags=(
   LDFLAGS="-L/Applications/Xcode.app/Contents/Developer/Platforms/$PLATFORM/usr/lib/"
   PKG_CONFIG_PATH="$ROOT/$os_arch/lib/pkgconfig"
 
-  '--enable-fast-install'
   '--enable-shared=no'
   "--host=$TARGET"
   "--prefix=$ROOT/$os_arch"
+
+  '--enable-fast-install'
   "--with-jpeg-include-dir=$ROOT/$os_arch/include"
   "--with-jpeg-lib-dir=$ROOT/$os_arch/lib"
   '--without-x'
@@ -80,3 +67,5 @@ print -n 'done, '
 print -n 'installing... '
 xl $name "4_install_$os_arch" make install || exit 1
 print 'done.'
+
+validateBuiltLib $thisLib $ARCH || exit 1

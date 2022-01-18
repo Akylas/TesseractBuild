@@ -41,8 +41,8 @@ config_flags=(
   LDFLAGS="-L/Applications/Xcode.app/Contents/Developer/Platforms/$PLATFORM/usr/lib/"
   PKG_CONFIG_PATH="$ROOT/$os_arch/lib/pkgconfig"
 
-  "--host=$TARGET"
   '--enable-shared=no'
+  "--host=$TARGET"
   "--prefix=$ROOT/$os_arch"
 )
 
