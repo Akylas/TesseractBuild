@@ -7,6 +7,3 @@ Sources
 # macOS/Xcode
 .DS_Store
 **/xcuserdata/*
-
-# Special config.sub override, see Scripts/README.md
-Scripts/config.*

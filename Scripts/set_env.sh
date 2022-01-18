@@ -1,27 +1,30 @@
 #!/bin/zsh -f
 
 # Get absolute path to this script
-thisAbsPath=${0:A}
+THIS_ABS_PATH=${0:A}
 
 # Get immediate relative info
-scriptName=${thisAbsPath##*/}
-parentPath=${thisAbsPath%/*}
+SCRIPT_NAME=${THIS_ABS_PATH##*/}
+PARENT_PATH=${THIS_ABS_PATH%/*}
 
 # Assert we are *named what* we should be
-if [[ $scriptName != 'set_env.sh' ]]; then
+if [[ $SCRIPT_NAME != 'set_env.sh' ]]; then
   echo "Warning: expected this script to be named \"set_env.sh\", instead it's \"$scriptName\"."
 fi
 
 # Assert we are *where* we should be
-parentName=${parentPath##*/}
+parentName=${PARENT_PATH##*/}
 if [[ $parentName != 'Scripts' ]]; then
   echo "Warning: expected this script's parent directory to be \"Scripts\", instead it's \"$parentName\"."
 fi
 
-readonly SCRIPTSDIR=$parentPath
-readonly PROJECTDIR=${parentPath%/Scripts}
 
-print -n "Sourcing ${SCRIPTSDIR/$PROJECTDIR/\$PROJECTDIR}/$scriptName... "
+readonly SCRIPTSDIR=$PARENT_PATH
+readonly PROJECTDIR=${PARENT_PATH%/Scripts}
+
+
+# print -n "Sourcing ${SCRIPTSDIR/$PROJECTDIR/\$PROJECTDIR}/$SCRIPT_NAME... "
+
 
 readonly DOWNLOADS=$PROJECTDIR/Downloads
 readonly LOGS=$PROJECTDIR/Logs
@@ -30,22 +33,28 @@ readonly SOURCES=$PROJECTDIR/Sources
 
 readonly ALL_CMDS=$LOGS/commands.sh
 
-# TODO: why doesn't this seem to need to be exported?
-PATH=$ROOT/bin:$PATH
+readonly CONFIG_SUB_PATCHED=$SOURCES/config_sub/config.sub.patched
 
-# TODO: and this one does need to be exported??
+# For interacting with the TesseractBuilt Environment independent 
+# of the build scripts; needed for 'test_tesseract.sh'
+export PATH=$ROOT/bin:$PATH
 export TESSDATA_PREFIX=$ROOT/share/tessdata
-
 export PROMPT="(TBE) $PROMPT"
 
+
 checkConfigSub() {
-  if ! [ -e $SCRIPTSDIR/config.sub.patched ]; then
-    $SCRIPTSDIR/download_config.sub_and_patch.sh || { echo 'Error: failed in calling download_config'; exit 1 }
+  # The Xcode libs depend on our hacked/patched config.sub
+  if ! [ -e $CONFIG_SUB_PATCHED ]; then
+    echo "$functrace ERROR file doesn't exist, $CONFIG_SUB_PATCHED"
+    return 1
   fi
+
+  return 0
 }
 
+
 _exec() {
-  # Try and execute a command, logging to itself to ALL_CMDS, and exiting
+  # Try to execute a command, logging itself to ALL_CMDS, and exiting
   # w/an error if there's a failure.
   local _status
 
@@ -54,11 +63,11 @@ _exec() {
     mkdir -p "${LOGS}"
   fi
 
-  $@
+  $@  # run the command
 
   _status=$?
   if [ $_status -ne 0 ]; then
-    echo 'ERROR running' $@ >&2
+    echo "$functrace ERROR running $@" >&2
     return $_status
   fi
 
@@ -66,8 +75,9 @@ _exec() {
   return 0
 }
 
+
 _exec_and_log() {
-  # Try and execute a step in the build process, logging its stdout and 
+  # Try to execute a step in the build process, logging its stdout and 
   # stderr.
   #
   # pkgname :: the name of the pkg being configured/installed, e.g., leptonica
@@ -109,6 +119,84 @@ _exec_and_log() {
 alias xc=_exec
 alias xl=_exec_and_log
 
+clean() {
+  local files=$1
+
+  if [ -z $files ]; then
+    echo 'Already clean.'
+    return 0
+  fi
+
+  # ZSH for split single lump of text, $files, into an array of lines
+  filesArr=("${(@f)${files}}")
+
+  # Loop over files, removing, then testing if the parent-dir is empty
+  for file in $filesArr; do
+    print -n "Deleting $file... "
+    
+    msg=$(rm $file 2>&1)
+    _status=$?
+    if [ $_status -ne 0 ]; then
+      echo "ERROR $msg"
+      return $_status
+    fi
+
+    print ' done.'
+    
+    parentDir=${file%/*}  # substitue filename with nothing
+    rmdir $parentDir 2>/dev/null && echo "Deleted dir $parentDir"
+  done
+}
+
+checkForXcodeLib() {
+  lib=$1
+  arch=$2
+
+  [ -f $lib ] || return 1
+  
+  info=$(xcrun lipo -info $lib)
+  
+  [[ $info =~ 'Non-fat file' ]] || return 1
+  [[ $info =~ $ARCH ]]          || return 1
+
+  print "found valid single-arch-$ARCH lib ${lib/$ROOT/\$ROOT}"
+  return 0
+}
+
+validateBuiltLib() {
+  lib=$1
+  arch=$2
+
+  if ! [ -f $lib ]; then
+    echo "ERROR could not find $lib"
+    return 1
+  fi
+
+  info=$(xcrun lipo -info $lib)
+
+  if ! [[ $info =~ 'Non-fat file' ]]; then
+    echo "ERROR expected a single-arch (\"non-fat\") lib, found \"$info\""
+    return 1
+  fi
+
+  if ! [[ $info =~ $ARCH ]]; then
+    echo "ERROR expected a lib for arch $arch, found \"$info\""
+    return 1
+  fi
+
+  return 0
+}
+
+verifyPlatform() {
+  platform=$1
+
+  [ -d /Applications/Xcode.app/Contents/Developer/Platforms/$PLATFORM ] && return 0
+  
+  echo "ERROR $platform does not exist"
+
+  return 1
+}
+
 download() {
   local name=$1
   local url=$2
@@ -128,7 +216,9 @@ download() {
   print ' done.'
 }
 
+
 extract() {
+  # Called by all build scripts to unpack a tarball
   local name=$1
   local targz=$2
 
@@ -151,7 +241,9 @@ extract() {
   print ' done.'
 }
 
+
 print_project_env() {
+  # Print out this environment's variables
   cat << EOF
 
 Directories:
@@ -173,4 +265,4 @@ print_project_env  print this description of the project environment
 EOF
 }
 
-print 'done.'
+# print 'done.'
