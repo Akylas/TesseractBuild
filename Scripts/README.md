@@ -1,5 +1,48 @@
 # Building
 
+The ultimate goal is to have 5 libs that you can import into an Xcode project: libjpeg, libpng, libtiff, liblept, and libtesseract.
+
+To build those, you need some build tools from GNU.
+
+The top-level ./Scripts/Build_All.sh script calls these two scripts, in order:
+1.  ./Scripts/gnu-tools/Build_All.sh
+2.  ./Scripts/xcode-libs/Build_All.sh
+
+After a successful top-level Build_All, you need to run test_tesseract.sh.  That script downloads the reqiured language data from the Tesseract project, and then runs the command-line tesseract program, with that langauge data, against some test images.
+
+## The build scripts
+
+The Build_All scripts call individual build scripts, like build_automake.sh, or build_tesseract.sh.  You can call any script directly, from any location (pwd) and they should just work.  If you were to call build_tesseract first, without building all of its dependencies, it would happily start up and try to do its best till it found something missing, and then it would halt with an error message.  Build-related errors are logged in ./Logs, and the script prints a helpful message, directing you to the relevant log file.
+
+The build order is:
+
+```none
+./gnu-tools:
+  1. build_autoconf.sh
+  2. build_automake.sh
+  3. build_pkgconfig.sh
+  4. build_libtool.sh
+
+./xcode-libs:
+  5. build_libjpeg.sh
+  6. build_libpng.sh
+  7. build_libtiff.sh
+  8. build_leptonica.sh
+  9. build_tesseract.sh
+```
+
+The build_*.sh scripts all have this in common:
+-   they depend on set_env.sh
+-   they can download their own source (tarball), and save it in ./Downloads
+-   they can extract their tarball, into ./Sources
+-   they are pre-configured to build to ARM64 for iOS, iOS-Simulator, and macOS; and X86_64 for iOS-Simulator and macOS
+
+All the build_*.sh scripts accept a `clean` argument to remove their build products from the Root directory; any changes to their Sources directories is left alone.  For the Build_All scripts you can pass `clean-all` to have clean called on the individual scripts.
+
+### gnu-tools
+
+
+
 ## ZSH syntax
 
 I designed the scripts for ZSH, which should be available on modern Macs.
