@@ -7,10 +7,10 @@ Like, this *easy*:
 
 1. **git clone** or download this repo
 1. **cd** to the repo
-1. run **./Scripts/build/build_all.sh**
+1. run **./Scripts/Build_All.sh**
     1. wait for successful build
 1. run **./Scripts/test_tesseract.sh**, to get some language recognition data and test the build
-1. open **iOCR/iOCR.xcodeproj**
+1. open **iOCR/iOS/iOCR-iOS.xcodeproj**
 1. run the **iOCR** target on an iPad Pro 12.9-inch simulator
 
 If you want to learn more about those steps, check out this guide and...
