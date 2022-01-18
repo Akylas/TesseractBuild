@@ -22,7 +22,6 @@ checkForXcodeLib $thisLib $ARCH && exit 0
 verifyPlatform || exit 1
 
 cflags=(
-  "-arch $ARCH"
   "-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/$PLATFORM"
   $PLATFORM_MIN_VERSION
   "--target=$TARGET"

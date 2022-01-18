@@ -123,6 +123,8 @@ xc ln -fs libpng16-ios.a libpng-ios.a
 xc ln -fs libpng16-macos.a libpng-macos.a
 xc ln -fs libpng16-sim.a libpng-sim.a
 
+# xc ln -fs libpng16.a libpng.a  # leptonica and tesseract need the lib named this way
+
 # --  Copy headers  -----------------------------------------------------------
 
 xc mkdir -p $ROOT/include/libpng16
