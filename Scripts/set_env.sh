@@ -159,7 +159,7 @@ checkForXcodeLib() {
   [[ $info =~ 'Non-fat file' ]] || return 1
   [[ $info =~ $ARCH ]]          || return 1
 
-  print "found valid single-arch-$ARCH lib ${lib/$ROOT/\$ROOT}"
+  print "Skipped config/make/install, found valid single-arch-$ARCH lib ${lib/$ROOT/\$ROOT}"
   return 0
 }
 
@@ -221,12 +221,7 @@ extract() {
   # Called by all build scripts to unpack a tarball
   local name=$1
   local targz=$2
-
-  if [[ -n $3 ]]; then
-    local dirname=$3
-  else
-    local dirname=$name
-  fi
+  local dirname=$3
 
   if [ -d $SOURCES/$dirname ]; then
     # shellcheck disable=SC2016

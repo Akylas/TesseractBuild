@@ -1,5 +1,5 @@
 <!-- markdownlint-disable-file MD033 -->
-# Configuring Xcode to use our Tesseract and Leptonica libraries
+# Using the C/C++ libs in Xcode
 
 ## Overview
 

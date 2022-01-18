@@ -46,8 +46,8 @@ config_flags=(
   "--prefix=$ROOT/$os_arch"
 )
 
-xc mkdir -p $SOURCES/$name/$os_arch
-xc cd $SOURCES/$name/$os_arch
+xc mkdir -p $SOURCES/$dirname/$os_arch || exit 1
+xc cd $SOURCES/$dirname/$os_arch  || exit 1
 
 print -n 'configuring... '
 xl $name "2_config_$os_arch" ../configure $config_flags || exit 1

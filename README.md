@@ -1,19 +1,28 @@
 <!-- markdownlint-disable-file MD033 -->
-# Multilingual OCR for Swift and your iOS/macOS project
+# Multilingual OCR for Swift: using C/C++ libs with iOS (and macOS)
 
-Welcome to our project, **Tesseract OCR in your Xcode Project**.  This will guide you through the process of building the Tesseract OCR library and using its API from Swift in your Xcode project, easily.
+Welcome to our project, **Tesseract OCR in _your_ Xcode Project**.  We started this project because we really wanted Japanese OCR in an iOS.  Apple's Vision system doesn't support Japanese, so we picked the open-source project Tesseract OCR, and... we started running into issues around building C/C++ libs for iOS (and macOS).
 
-Like, this *easy*:
+We worked through it all, though, and are happy to say "we did it!". We also wanted to show you how easy it can be...
+
+...like, this *easy*:
 
 1. **git clone** or download this repo
 1. **cd** to the repo
-1. run **./Scripts/Build_All.sh**
-    1. wait for successful build
-1. run **./Scripts/test_tesseract.sh**, to get some language recognition data and test the build
-1. open **iOCR/iOS/iOCR-iOS.xcodeproj**
-1. run the **iOCR** target on an iPad Pro 12.9-inch simulator
+1. run `./Scripts/Build_All.sh`
+    1. watch just the right amount of progress messages as you wait for a successful build...
+1. run `./Scripts/test_tesseract.sh` to get some language recognition data and test the build
+1. open `iOCR/iOS/iOCR-iOS.xcodeproj`
+1. run the **iOCR** target on an **iPad Pro 12.9-inch Simulator** and see that Chinese, English, and Japanese text are recognized in the app
 
-If you want to learn more about those steps, check out this guide and...
+
+We always wanted you to be able to do something like this, too!, so as we went along we made this, _Our Guide to Building and Integrating C/C++ libs in Xcode_.
+
+## This Guide
+
+This Guide covers how we made this project/repo (the "build environment"), how to target builds for different frameworks and processor architectures, and finally import the libs into Xcode and use their C-API's with Swift.
+
+If you want to know more, read on to...
 
 - [Learn about the environment](#the-project-environment): get to know this repo's layout
 - [Build from source](#build-from-source): understand the arrangement of the libraries that make up Tesseract OCR; create a build chain; configure and build!
@@ -22,9 +31,7 @@ If you want to learn more about those steps, check out this guide and...
 
 ## The project environment
 
-This guide refers to the project directory that you cloned/downloaded as **PROJECTDIR**.  All command-line work, paths, and examples are from this base directory.
-
-The new repo looks pretty bare:
+When you clone this repo (or download the ZIP and expand it), you'll be looking at a directory/folder we refer to as the **PROJECTDIR**.  Navigate into your PROJECTDIR, and you'll see the inital state of the repo:
 
 ```sh
 % ls *

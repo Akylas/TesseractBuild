@@ -4,42 +4,44 @@ name='libtool-2.4.6'
 targz=$name.tar.gz
 url="http://ftp.gnu.org/gnu/libtool/$targz"
 
+dirname=$name
+
+print "\n======== $name ========"
 
 thisAbsPath=${0:A}
 parentPath=${thisAbsPath%/*}
 scriptName=${thisAbsPath##*/}
+
 setEnvPath=$parentPath/../set_env.sh
+source $setEnvPath || { echo "ERROR could not source $setEnvPath"; exit 1 }
 
 
-print "\n======== $name ========"
+# --  Clean  ------------------------------------------------------------------
 
-source $setEnvPath || { echo "$scriptName: error sourcing $setEnvPath"; exit 1 }
-
-if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
-  deleted=$(find $ROOT -name 'libtool*' -prune -print -exec rm -rf {} \;)
-  if [[ -n $deleted ]]; then
-    echo "$scriptName: deleted:"
-    echo $deleted
-  else
-    echo "$scriptName: clean"
-  fi
-  exit 0
+if [[ $1 == 'clean' ]]; then
+  # See note at bottom, "Copy headers", for why 'j*.h'
+  files=$(find $ROOT \
+      \( -name 'libtool*' \) \
+      -a -type f -print)
+  clean $files && exit 0 || exit 1
 fi
+
+# --  Check if already build  -------------------------------------------------
 
 if {
   [ -f $ROOT/bin/libtool ] &&
     version=$($ROOT/bin/libtool --version) &&
     [[ $version == *'2.4.6'* ]]
 }; then
-  echo "Skipped build, found $ROOT/bin/libtool w/version 2.4.6"
+  echo "Skipped build, found \$ROOT/bin/libtool w/version 2.4.6"
   exit 0
 fi
 
 # --  Download / Extract  -----------------------------------------------------
 
-
 download $name $url $targz
 extract $name $targz
+extract $name $targz $dirname
 
 # --  Config / Make / Install  ------------------------------------------------
 
@@ -49,7 +51,7 @@ xc cd $SOURCES/$name/x86 || exit 1
 print -n 'x86: '
 
 print -n 'configuring... '
-xl $name '2_config_x86' ../configure --prefix=$ROOT || exit 1
+xl $name '2_config_x86' ../configure "--prefix=$ROOT" || exit 1
 print -n 'done, '
 
 print -n 'making... '

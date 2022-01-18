@@ -58,9 +58,10 @@ config_flags=(
   '--without-libwebp'
 )
 
-xc mkdir -p $SOURCES/$name/$os_arch || exit 1
-xc cd $SOURCES/$name/$os_arch || exit 1
+xc mkdir -p $SOURCES/$dirname/$os_arch || exit 1
+xc cd $SOURCES/$dirname/$os_arch  || exit 1
 
+# "Step 2" is pre-configure, in build script
 print -n 'configuring... '
 xl $name "3_config_$os_arch" ../configure $config_flags || exit 1
 print -n 'done, '

@@ -1,14 +1,16 @@
-# Building
+# Building C/C++ libs for Xcode
 
-The ultimate goal is to have 5 libs that you can import into an Xcode project: libjpeg, libpng, libtiff, liblept, and libtesseract.
+The ultimate goal is to have 5 libs that you can import into an Xcode project: libjpeg, libpng, libtiff, liblept, and libtesseract.  To build those, you'll first need to build some tools from GNU.
 
-To build those, you need some build tools from GNU.
+[Scripts/Build_All.sh](./Build_All.sh) makes the GNU tools and the Xcode libs by calling these two scripts, in order:
+1.  `gnu-tools/Build_All.sh`
+2.  `xcode-libs/Build_All.sh`
 
-The top-level ./Scripts/Build_All.sh script calls these two scripts, in order:
-1.  ./Scripts/gnu-tools/Build_All.sh
-2.  ./Scripts/xcode-libs/Build_All.sh
+After `Scripts/Build_All.sh` completes, you need to run [test_tesseract.sh](./test_tesseract.sh).  It downloads the reqiured language data from the Tesseract project, and then runs the command-line tesseract program with that langauge data against some test images.
 
-After a successful top-level Build_All, you need to run test_tesseract.sh.  That script downloads the reqiured language data from the Tesseract project, and then runs the command-line tesseract program, with that langauge data, against some test images.
+After `test_tesseract.sh` completes, with passing image-tests, you can confidently move on to [using the C/C++ libs in Xcode](../iOCR/README.md).
+
+Please read on if you want to learn more about the project environment and the build scripts themselves; or, [return to the Guide](../README.md).
 
 ## The build scripts
 

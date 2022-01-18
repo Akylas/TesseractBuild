@@ -3,48 +3,43 @@
 name='automake-1.16.5'
 targz=$name.tar.gz
 url="http://ftp.gnu.org/gnu/automake/$targz"
+dirname=$name
 
+print "\n======== $name ========"
 
 thisAbsPath=${0:A}
 parentPath=${thisAbsPath%/*}
 scriptName=${thisAbsPath##*/}
+
 setEnvPath=$parentPath/../set_env.sh
+source $setEnvPath || { echo "ERROR could not source $setEnvPath"; exit 1 }
 
 
-print "\n======== $name ========"
+# --  Clean  ------------------------------------------------------------------
 
-source $setEnvPath || { echo "$scriptName: error sourcing $setEnvPath"; exit 1 }
-
-if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
-  deleted=$(
-    find $ROOT/bin \
-      \( \
-      -name 'aclocal*' -o \
-      -name 'automake*' \
-      \) \
-      -print -exec rm -rf {} + | sort
-  )
-  if [[ -n $deleted ]]; then
-    echo "$scriptName: deleted:"
-    echo $deleted
-  else
-    echo "$scriptName: clean"
-  fi
-  exit 0
+if [[ $1 == 'clean' ]]; then
+  # See note at bottom, "Copy headers", for why 'j*.h'
+  files=$(find $ROOT \
+      \( -name 'aclocal' -o -name 'automake' \) \
+      -a -type f -print)
+  clean $files && exit 0 || exit 1
 fi
+
+# --  Check if already build  -------------------------------------------------
+
 if {
   [ -f $ROOT/bin/automake ] &&
     version=$($ROOT/bin/automake --version) &&
     [[ $version == *'1.16.5'* ]]
 }; then
-  print "Skipped build, found $ROOT/bin/automake w/version 1.16.5"
+  print "Skipped build, found \$ROOT/bin/automake w/version 1.16.5"
   exit 0
 fi
 
 # --  Download / Extract  -----------------------------------------------------
 
 download $name $url $targz
-extract $name $targz
+extract $name $targz $dirname
 
 # --  Config / Make / Install  ------------------------------------------------
 
