@@ -31,23 +31,20 @@ If you want to know more, read on to...
 
 ## The project environment
 
-When you clone this repo (or download the ZIP and expand it), you'll be looking at a directory/folder we refer to as the **PROJECTDIR**.  Navigate into your PROJECTDIR, and you'll see the inital state of the repo:
+When you clone this repo (or download the ZIP and expand it), you'll be looking at a directory/folder we refer to as the **PROJECTDIR**.  Navigate into your PROJECTDIR, and you'll see the inital state of the repo, which looks mostly like this (only showing the important stuff, for now):
 
 ```sh
-% ls *
-README.md
-
-Notes:
-static/
+iOCR
+README.md       iOCR.xcconfig    iOS    macOS
 
 Root:
-README.md  include/
+README.md       include
 
 Scripts:
-README.md          build/             test_tesseract.sh*
+Build_All.sh    README.md        gnu-tools      set_env.sh      test_tesseract.sh      xcode-libs
 
-iOCR:
-iOCR/           iOCR.xcodeproj/ iOCRTests/
+Sources:
+config_sub
 ```
 
 - All build products will be installed in **Root**; the **include** directory already has a modulemap file for our basic Xcode project

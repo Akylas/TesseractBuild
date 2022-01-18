@@ -14,6 +14,8 @@ Please read on if you want to learn more about the project environment and the b
 
 ## The build scripts
 
+<!-- (...and, on the subject of scripts, we wrote all our scripts in/for ZSH.  We've commented on some particular ZSH-y things in [the Scripts README, _ZSH things_](./Scripts/README.md#zsh-things).) -->
+
 The Build_All scripts call individual build scripts, like build_automake.sh, or build_tesseract.sh.  You can call any script directly, from any location (pwd) and they should just work.  If you were to call build_tesseract first, without building all of its dependencies, it would happily start up and try to do its best till it found something missing, and then it would halt with an error message.  Build-related errors are logged in ./Logs, and the script prints a helpful message, directing you to the relevant log file.
 
 The build order is:
@@ -41,11 +43,45 @@ The build_*.sh scripts all have this in common:
 
 All the build_*.sh scripts accept a `clean` argument to remove their build products from the Root directory; any changes to their Sources directories is left alone.  For the Build_All scripts you can pass `clean-all` to have clean called on the individual scripts.
 
-### gnu-tools
+### set_env.sh
+
+`set_env.sh` creates all the project-level environment variables that build scripts need to know, like downloading and extracting tarballs, verifying files exist, or setting up folders for all the build targets.  Every build and config script sources `set_env.sh` when it starts up; `test_tesseract.sh` also sources it.
+
+When I need to debug a build process or pathing issue, it helps if I can interact with the environment: calling individual builds, exploring paths, etc...  `./Scripts/set_env.sh` really helps with this.  I made set_env so we can call it directly, too:
+
+```sh
+% source Scripts/set_env.sh
+(TBE) %
+```
+
+It adds that nice `(TBE)` prompt (**T**esseract **B**uild **E**nvironment) to let us know we're ready to start making builds happen.  To see what's available in the TBE, we can call a simple help function:
+
+```none
+(TBE) % tbe-help
+
+Directory vars required for config-make-install and build scripts:
+$PROJECTDIR:  /home/user/develop/TesseractBuild
+$DOWNLOADS:   /home/user/develop/TesseractBuild/Downloads
+$LOGS:        /home/user/develop/TesseractBuild/Logs
+$ROOT:        /home/user/develop/TesseractBuild/Root
+$SCRIPTSDIR:  /home/user/develop/TesseractBuild/Scripts
+$SOURCES      /home/user/develop/TesseractBuild/Sources
+
+Scripts you can run:
+$SCRIPTSDIR/Build_All.sh             clean|run all build/configue scripts
+$SCRIPTSDIR/gnu-tools/Build_All.sh   clean|run all GNU-prerequisite build scripts
+$SCRIPTSDIR/xcode-libs/Build_All.sh  clean|run all Xcode libs build/configue scripts
+$SCRIPTSDIR/test_tesseract.sh        after build, run a quick test of tesseract
+
+Functions you can call:
+tbe-help                 print this description of the project environment
+```
+
+There are many other functions, but they're only meant to be called by the build and config-make-install scripts.
 
 
 
-## ZSH syntax
+## ZSH things
 
 I designed the scripts for ZSH, which should be available on modern Macs.
 

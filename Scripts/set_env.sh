@@ -35,15 +35,17 @@ readonly ALL_CMDS=$LOGS/commands.sh
 
 readonly CONFIG_SUB_PATCHED=$SOURCES/config_sub/config.sub.patched
 
-# For interacting with the TesseractBuilt Environment independent 
+# For interacting with the TesseractBuilt Environment independent
 # of the build scripts; needed for 'test_tesseract.sh'
 export PATH=$ROOT/bin:$PATH
 export TESSDATA_PREFIX=$ROOT/share/tessdata
+
+# Finally, just 'cause I think it looks nice
 export PROMPT="(TBE) $PROMPT"
 
 
 checkConfigSub() {
-  # The Xcode libs depend on our hacked/patched config.sub
+  # Targeting the iOS Simulator Framework depends on a hacked/patched config.sub
   if ! [ -e $CONFIG_SUB_PATCHED ]; then
     echo "$functrace ERROR file doesn't exist, $CONFIG_SUB_PATCHED"
     return 1
@@ -77,7 +79,7 @@ _exec() {
 
 
 _exec_and_log() {
-  # Try to execute a step in the build process, logging its stdout and 
+  # Try to execute a step in the build process, logging its stdout and
   # stderr.
   #
   # pkgname :: the name of the pkg being configured/installed, e.g., leptonica
@@ -90,7 +92,7 @@ _exec_and_log() {
   #
   #   _exec_and_log leptonica-1.82.0 '2_preconfig' ./autogen.sh
   #
-  # will create the dir $LOGS/leptonica-1.82.0, then run `./autogen.sh` directing its 
+  # will create the dir $LOGS/leptonica-1.82.0, then run `./autogen.sh` directing its
   # errors and outputs to 2_preconfig.err and 2_preconfig.out
 
   local pkgname=$1
@@ -133,7 +135,7 @@ clean() {
   # Loop over files, removing, then testing if the parent-dir is empty
   for file in $filesArr; do
     print -n "Deleting $file... "
-    
+
     msg=$(rm $file 2>&1)
     _status=$?
     if [ $_status -ne 0 ]; then
@@ -142,7 +144,7 @@ clean() {
     fi
 
     print ' done.'
-    
+
     parentDir=${file%/*}  # substitue filename with nothing
     rmdir $parentDir 2>/dev/null && echo "Deleted dir $parentDir"
   done
@@ -153,9 +155,9 @@ checkForXcodeLib() {
   arch=$2
 
   [ -f $lib ] || return 1
-  
+
   info=$(xcrun lipo -info $lib)
-  
+
   [[ $info =~ 'Non-fat file' ]] || return 1
   [[ $info =~ $ARCH ]]          || return 1
 
@@ -191,7 +193,7 @@ verifyPlatform() {
   platform=$1
 
   [ -d /Applications/Xcode.app/Contents/Developer/Platforms/$PLATFORM ] && return 0
-  
+
   echo "ERROR $platform does not exist"
 
   return 1
@@ -237,25 +239,26 @@ extract() {
 }
 
 
-print_project_env() {
+tbe-help() {
   # Print out this environment's variables
   cat << EOF
 
-Directories:
+Directory vars required for config-make-install and build scripts:
 \$PROJECTDIR:  $PROJECTDIR
-\$DOWNLOADS:   $DOWNLOADS 
+\$DOWNLOADS:   $DOWNLOADS
+\$LOGS:        $LOGS
 \$ROOT:        $ROOT
 \$SCRIPTSDIR:  $SCRIPTSDIR
 \$SOURCES      $SOURCES
 
-Scripts:
-\$SCRIPTSDIR/Build_All.sh             clean|run all configure/build scripts
+Scripts you can run:
+\$SCRIPTSDIR/Build_All.sh             clean|run all build/configue scripts
 \$SCRIPTSDIR/gnu-tools/Build_All.sh   clean|run all GNU-prerequisite build scripts
-\$SCRIPTSDIR/xcode-libs/Build_All.sh  clean|run all Xcode libs configure/build scripts
+\$SCRIPTSDIR/xcode-libs/Build_All.sh  clean|run all Xcode libs build/configue scripts
 \$SCRIPTSDIR/test_tesseract.sh        after build, run a quick test of tesseract
 
-Functions:
-print_project_env  print this description of the project environment
+Functions you can call:
+tbe-help                 print this description of the project environment
 
 EOF
 }
