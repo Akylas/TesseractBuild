@@ -2,22 +2,20 @@
 
 # LIBTOOL -- https://www.gnu.org/software/libtool/
 
-scriptpath=$0:A
-parentdir=${scriptpath%/*}
-scriptname=${scriptpath##*/}
+thisAbsPath=${0:A}
+parentPath=${thisAbsPath%/*}
+scriptName=${thisAbsPath##*/}
 
-if ! source $parentdir/project_environment.sh; then
-  echo "build_libtool.sh: error sourcing $parentdir/project_environment.sh"
-  exit 1
-fi
+setEnvPath=$parentPath/../set_env.sh
+source $setEnvPath || { echo "$scriptName: error sourcing $setEnvPath"; exit 1 }
 
 if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
   deleted=$(find $ROOT -name 'libtool*' -prune -print -exec rm -rf {} \;)
   if [[ -n $deleted ]]; then
-    echo "$scriptname: deleted:"
+    echo "$scriptName: deleted:"
     echo $deleted
   else
-    echo "$scriptname: clean"
+    echo "$scriptName: clean"
   fi
   exit 0
 fi

@@ -2,20 +2,18 @@
 
 # LIBJPEG -- http://ijg.org/
 
-scriptpath=$0:A
-parentdir=${scriptpath%/*}
-scriptname=${scriptpath##*/}
+thisAbsPath=${0:A}
+parentPath=${thisAbsPath%/*}
+scriptName=${thisAbsPath##*/}
 
-if ! source $parentdir/project_environment.sh; then
-  echo "build_libjpeg.sh: error sourcing $parentdir/project_environment.sh"
-  exit 1
-fi
+setEnvPath=$parentPath/../set_env.sh
+source $setEnvPath || { echo "$scriptName: error sourcing $setEnvPath"; exit 1 }
 
 # Clean
 if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
   FILES=("${(@f)$(find $ROOT \( -name '*jpeg*' -o -name '*jpg*' -o -name 'j*.h' \) -print)}")
   if [[ -z $FILES ]]; then
-    echo "$scriptname: already clean."
+    echo "$scriptName: already clean."
   else
     # Loop over files, removing, then testing if the parent-dir is empty
     for FILE in $FILES; do

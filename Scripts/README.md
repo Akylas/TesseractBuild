@@ -1,5 +1,13 @@
 # Building
 
+## ZSH syntax
+
+I designed the scripts for ZSH, which should be available on modern Macs.
+
+Here are some things I've found along the way, developing these scripts:
+
+-   **`$0:A` or `${0:A}`**: to get the absolute pathname of the running script.  From the Unix-StackExchange [Q](https://unix.stackexchange.com/q/76505/366399), there's a comment at the bottom of this [A](https://unix.stackexchange.com/a/115431/366399) comparing `:a` to `:A`, and the accepted [A](https://unix.stackexchange.com/a/136565/366399).
+
 ## Intractable issues
 
 I've run into two main issues I can't really resolve and have resorted to hackery:

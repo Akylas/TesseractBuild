@@ -1,22 +1,34 @@
 #!/bin/zsh -f
 
+# Get absolute path to this script
+thisAbsPath=${0:A}
 
-# From this script named 'project_environment.sh', start stripping off the
-# last path component till we arrive at PROJECTDIR:
-#
-#   /your/personal/path/[PROJECTDIR]/Scripts/build/project_environment.sh
+# Get immediate relative info
+scriptName=${thisAbsPath##*/}
+parentPath=${thisAbsPath%/*}
 
-SCRIPTNAME=$0:A
-readonly BUILDDIR=${SCRIPTNAME%/project_environment.sh}
-readonly SCRIPTSDIR=${BUILDDIR%/build}
-readonly PROJECTDIR=${SCRIPTSDIR%/Scripts}
+# Assert we are *named what* we should be
+if [[ $scriptName != 'set_env.sh' ]]; then
+  echo "Warning: expected this script to be named \"set_env.sh\", instead it's \"$scriptName\"."
+fi
+
+# Assert we are *where* we should be
+parentName=${parentPath##*/}
+if [[ $parentName != 'Scripts' ]]; then
+  echo "Warning: expected this script's parent directory to be \"Scripts\", instead it's \"$parentName\"."
+fi
+
+readonly SCRIPTSDIR=$parentPath
+readonly PROJECTDIR=${parentPath%/Scripts}
+
+print -n "Sourcing ${SCRIPTSDIR/$PROJECTDIR/\$PROJECTDIR}/$scriptName... "
 
 readonly DOWNLOADS=$PROJECTDIR/Downloads
 readonly LOGS=$PROJECTDIR/Logs
 readonly ROOT=$PROJECTDIR/Root
 readonly SOURCES=$PROJECTDIR/Sources
 
-readonly MASTER_CMDS=$LOGS/commands.sh
+readonly ALL_CMDS=$LOGS/commands.sh
 
 # TODO: why doesn't this seem to need to be exported?
 PATH=$ROOT/bin:$PATH
@@ -33,11 +45,11 @@ checkConfigSub() {
 }
 
 _exec() {
-  # Try and execute a command, logging to itself to MASTER_CMDS, and exiting
+  # Try and execute a command, logging to itself to ALL_CMDS, and exiting
   # w/an error if there's a failure.
   local _status
 
-  # Make sure LOGS dir is present for MASTER_CMDS
+  # Make sure LOGS dir is present for ALL_CMDS
   if ! [ -d "${LOGS}" ]; then
     mkdir -p "${LOGS}"
   fi
@@ -50,7 +62,7 @@ _exec() {
     return $_status
   fi
 
-  echo $@ >>$MASTER_CMDS
+  echo $@ >>$ALL_CMDS
   return 0
 }
 
@@ -90,7 +102,7 @@ _exec_and_log() {
     return "$_status"
   fi
 
-  echo ${@:3} >>$MASTER_CMDS
+  echo ${@:3} >>$ALL_CMDS
   return 0
 }
 
@@ -147,14 +159,18 @@ Directories:
 \$DOWNLOADS:   $DOWNLOADS 
 \$ROOT:        $ROOT
 \$SCRIPTSDIR:  $SCRIPTSDIR
-\$BUILDDIR:    $BUILDDIR
 \$SOURCES      $SOURCES
 
 Scripts:
-\$BUILDDIR/build_all.sh         clean|run all configure/build scripts
-\$SCRIPTSDIR/test_tesseract.sh  after build, run a quick test of tesseract
+\$SCRIPTSDIR/Build_All.sh             clean|run all configure/build scripts
+\$SCRIPTSDIR/gnu-tools/Build_All.sh   clean|run all GNU-prerequisite build scripts
+\$SCRIPTSDIR/xcode-libs/Build_All.sh  clean|run all Xcode libs configure/build scripts
+\$SCRIPTSDIR/test_tesseract.sh        after build, run a quick test of tesseract
 
 Functions:
-print_project_env  print this listing of the project environment
+print_project_env  print this description of the project environment
+
 EOF
 }
+
+print 'done.'

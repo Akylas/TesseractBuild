@@ -1,12 +1,12 @@
 #!/bin/zsh -f
 
-scriptpath=$0:A
-parentdir=${scriptpath%/*}
-scriptname=${scriptpath##*/}
+thisAbsPath=${0:A}
+parentPath=${thisAbsPath%/*}
+scriptName=${thisAbsPath##*/}
 builddir=$parentdir/build
 
-if ! source $builddir/project_environment.sh; then
-  echo "test_tesseract.sh: error sourcing $builddir/project_environment.sh"
+if ! source $builddir/set_env.sh; then
+  echo "test_tesseract.sh: error sourcing $builddir/set_env.sh"
   exit 1
 fi
 
@@ -54,7 +54,7 @@ test_image() {
   # Run tesseract command-line program on a number of sample/test images;
   #
   #   tesseract CL program should be in Root/bin, and Root/bin is
-  #   added to $PATH in project_environment.sh
+  #   added to $PATH in set_env.sh
   local testName=$1
   local image=$2
   local trainedDataName=$3

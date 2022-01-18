@@ -1,10 +1,10 @@
 #!/bin/zsh
 
-scriptpath=$0:A
-parentdir=${scriptpath%/*}
+thisAbsPath=${0:A}
+parentPath=${thisAbsPath%/*}
 
-if ! source $parentdir/project_environment.sh; then
-  echo "config-make-install_libpng.sh: error sourcing $parentdir/project_environment.sh"
+if ! source $parentPath/../set_env.sh; then
+  echo "config-make-install_libpng.sh: error sourcing $parentPath/../set_env.sh"
   exit 1
 fi
 

@@ -1,10 +1,10 @@
 #!/bin/zsh -f
 
-scriptpath=$0:A
-parentdir=${scriptpath%/*}
+thisAbsPath=${0:A}
+parentPath=${thisAbsPath%/*}
 
-if ! source $parentdir/project_environment.sh; then
-  echo Error sourcing $parentdir/project_environment.sh
+if ! source $parentPath/../set_env.sh; then
+  echo Error sourcing $parentPath/../set_env.sh
   exit 1
 fi
 
@@ -13,13 +13,13 @@ fi
 # PLATFORM='iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk'
 # PLATFORM_MIN_VERSION='-miphoneos-version-min=11.0'
 
-name=$1    # leptonica-1.82.0
+name=$1    # tesseract-5.0.0
 os_arch=$2 # ios_arm64
 
 print -n "$os_arch: "
 
-# Verify liblept.a is installed; requires pkglib is installed
-pkg_lib=$ROOT/$os_arch/lib/liblept.a
+# Verify libtesseract.a is installed; requires pkglib is installed
+pkg_lib=$ROOT/$os_arch/lib/libtesseract.a
 if {
   [ -f $pkg_lib ] &&
     info=$(lipo -info $pkg_lib) &&
@@ -38,11 +38,24 @@ fi
 cflags=(
   "-arch $ARCH"
   "-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/$PLATFORM"
-  "-I$ROOT/$os_arch/include"
+  "-I$ROOT/$os_arch/"
   $PLATFORM_MIN_VERSION
   "--target=$TARGET"
 
   '-fembed-bitcode'
+  '-no-cpp-precomp'
+  '-O2'
+  '-pipe'
+)
+
+# sames as cflags, but sans `-fembed-bitcode`
+cxxflags=(
+  "-arch $ARCH"
+  "-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/$PLATFORM"
+  "-I$ROOT/$os_arch/"
+  $PLATFORM_MIN_VERSION
+  "--target=$TARGET"
+
   '-no-cpp-precomp'
   '-O2'
   '-pipe'
@@ -54,21 +67,16 @@ config_flags=(
   CXX_FOR_BUILD="$(xcode-select -p)/usr/bin/g++"
   CFLAGS="$cflags"
   CPPFLAGS="$cflags"
-  CXXFLAGS="$cflags -Wno-deprecated-register"
+  CXXFLAGS="$cxxflags"
   LDFLAGS="-L$ROOT/$os_arch/lib -L/Applications/Xcode.app/Contents/Developer/Platforms/$PLATFORM/usr/lib/"
+  LIBLEPT_HEADERSDIR="$ROOT/$os_arch/include"
   LIBS='-lz -lpng -ljpeg -ltiff'
   PKG_CONFIG_PATH="$ROOT/$os_arch/lib/pkgconfig"
 
-  '--disable-programs'
+  '--disable-graphics'
   '--enable-shared=no'
   "--host=$TARGET"
   "--prefix=$ROOT/$os_arch"
-  '--with-jpeg'
-  '--with-libpng'
-  '--with-libtiff'
-  '--with-zlib'
-  '--without-giflib'
-  '--without-libwebp'
 )
 
 xc mkdir -p $SOURCES/$name/$os_arch || exit 1
@@ -76,6 +84,11 @@ xc cd $SOURCES/$name/$os_arch || exit 1
 
 print -n 'configuring... '
 xl $name "3_config_$os_arch" ../configure $config_flags || exit 1
+print -n 'done, '
+
+print -n 'overriding Makefile... '
+sed 's/am__append_46 = -lrt/# am__append_46 = -lrt/' Makefile > tmp || { echo "Error: could not sed/comment-out '-lrt' flag to tmp file"; exit 1 }
+mv tmp Makefile || { echo 'Error: could not move tmp file back on top of Makefile'; exit 1 }
 print -n 'done, '
 
 print -n 'making... '

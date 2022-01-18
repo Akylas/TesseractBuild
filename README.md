@@ -101,7 +101,7 @@ build_tesseract.sh*
 config-make-install_leptonica.sh
 config-make-install_tesseract.sh
 ...
-project_environment.sh
+set_env.sh
 utility.sh
 ```
 
