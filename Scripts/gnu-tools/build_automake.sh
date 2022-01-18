@@ -1,12 +1,18 @@
 #!/bin/zsh -f
 
-# AUTOMAKE -- https://www.gnu.org/software/automake/
+name='automake-1.16.5'
+targz=$name.tar.gz
+url="http://ftp.gnu.org/gnu/automake/$targz"
+
 
 thisAbsPath=${0:A}
 parentPath=${thisAbsPath%/*}
 scriptName=${thisAbsPath##*/}
-
 setEnvPath=$parentPath/../set_env.sh
+
+
+print "\n======== $name ========"
+
 source $setEnvPath || { echo "$scriptName: error sourcing $setEnvPath"; exit 1 }
 
 if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
@@ -26,11 +32,6 @@ if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
   fi
   exit 0
 fi
-
-name='automake-1.16.5'
-
-print "\n======== $name ========"
-
 if {
   [ -f $ROOT/bin/automake ] &&
     version=$($ROOT/bin/automake --version) &&
@@ -41,9 +42,6 @@ if {
 fi
 
 # --  Download / Extract  -----------------------------------------------------
-
-targz=$name.tar.gz
-url="http://ftp.gnu.org/gnu/automake/$targz"
 
 download $name $url $targz
 extract $name $targz

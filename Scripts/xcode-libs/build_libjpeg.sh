@@ -1,12 +1,20 @@
 #!/bin/zsh -f
 
-# LIBJPEG -- http://ijg.org/
+
+name='jpeg.v9d'
+targz='jpegsrc.v9d.tar.gz'
+url="http://www.ijg.org/files/$targz"
+dirname='jpeg-9d'
+
 
 thisAbsPath=${0:A}
 parentPath=${thisAbsPath%/*}
 scriptName=${thisAbsPath##*/}
-
 setEnvPath=$parentPath/../set_env.sh
+
+
+print "\n======== $name ========"
+
 source $setEnvPath || { echo "$scriptName: error sourcing $setEnvPath"; exit 1 }
 
 # Clean
@@ -26,15 +34,9 @@ if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
   exit 0
 fi
 
-name='jpeg.v9d'
-
-print "\n======== $name ========"
 
 # --  Download / Extract  -----------------------------------------------------
 
-targz='jpegsrc.v9d.tar.gz'
-url="http://www.ijg.org/files/$targz"
-dirname='jpeg-9d'
 
 download $name $url $targz
 extract $name $targz $dirname
@@ -42,7 +44,6 @@ extract $name $targz $dirname
 # --  Config / Make / Install  ------------------------------------------------
 
 # Legit Apple targets for the Simulator cannot be parsed by legit config.sub, see Scripts/README.md
-checkConfigSub
 print -- "--**!!**-- Overriding \$SOURCES/$dirname/config.sub with $SCRIPTSDIR/config.sub.patched"
 cp $SCRIPTSDIR/config.sub.patched $SOURCES/$dirname/config.sub || { echo "Error: could not find $SCRIPTSDIR/config.sub.patched"; exit 1 }
 

@@ -1,12 +1,18 @@
 #!/bin/zsh -f
 
-# LIBTOOL -- https://www.gnu.org/software/libtool/
+name='libtool-2.4.6'
+targz=$name.tar.gz
+url="http://ftp.gnu.org/gnu/libtool/$targz"
+
 
 thisAbsPath=${0:A}
 parentPath=${thisAbsPath%/*}
 scriptName=${thisAbsPath##*/}
-
 setEnvPath=$parentPath/../set_env.sh
+
+
+print "\n======== $name ========"
+
 source $setEnvPath || { echo "$scriptName: error sourcing $setEnvPath"; exit 1 }
 
 if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
@@ -20,10 +26,6 @@ if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
   exit 0
 fi
 
-name='libtool-2.4.6'
-
-print "\n======== $name ========"
-
 if {
   [ -f $ROOT/bin/libtool ] &&
     version=$($ROOT/bin/libtool --version) &&
@@ -35,8 +37,6 @@ fi
 
 # --  Download / Extract  -----------------------------------------------------
 
-targz=$name.tar.gz
-url="http://ftp.gnu.org/gnu/libtool/$targz"
 
 download $name $url $targz
 extract $name $targz

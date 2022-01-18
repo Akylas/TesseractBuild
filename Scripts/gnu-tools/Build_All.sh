@@ -5,7 +5,7 @@
 thisAbsPath=${0:A}
 parentPath=${thisAbsPath%/*}
 
-echo "Running $thisAbsPath"
+print "\nRunning $thisAbsPath"
 
 if [[ -n $1 ]] && [[ $1 == 'clean-all' ]]; then
   zsh $parentPath/build_autoconf.sh clean

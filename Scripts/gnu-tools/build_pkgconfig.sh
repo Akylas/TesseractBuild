@@ -1,12 +1,18 @@
 #!/bin/zsh -f
 
-# PKG-CONFIG -- https://www.freedesktop.org/wiki/Software/pkg-config/
+name='pkg-config-0.29.2'
+targz=$name.tar.gz
+url="https://pkg-config.freedesktop.org/releases/$targz"
+
 
 thisAbsPath=${0:A}
 parentPath=${thisAbsPath%/*}
 scriptName=${thisAbsPath##*/}
-
 setEnvPath=$parentPath/../set_env.sh
+
+
+print "\n======== $name ========"
+
 source $setEnvPath || { echo "$scriptName: error sourcing $setEnvPath"; exit 1 }
 
 if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
@@ -20,10 +26,6 @@ if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
   exit 0
 fi
 
-name='pkg-config-0.29.2'
-
-print "\n======== $name ========"
-
 if {
   [ -f $ROOT/bin/pkg-config ] &&
     version=$($ROOT/bin/pkg-config --version) &&
@@ -35,8 +37,6 @@ fi
 
 # --  Download / Extract  -----------------------------------------------------
 
-targz=$name.tar.gz
-url="https://pkg-config.freedesktop.org/releases/$targz"
 
 download $name $url $targz
 extract $name $targz

@@ -1,10 +1,18 @@
 #!/bin/zsh -f
 
+name='autoconf-2.71'
+targz=$name.tar.gz
+url="http://ftp.gnu.org/gnu/autoconf/$targz"
+
+
 thisAbsPath=${0:A}
 parentPath=${thisAbsPath%/*}
 scriptName=${thisAbsPath##*/}
-
 setEnvPath=$parentPath/../set_env.sh
+
+
+print "\n======== $name ========"
+
 source $setEnvPath || { echo "$scriptName: error sourcing $setEnvPath"; exit 1 }
 
 if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
@@ -30,10 +38,6 @@ if [[ -n $1 ]] && [[ $1 == 'clean' ]]; then
   exit 0
 fi
 
-name='autoconf-2.71'
-
-print "\n======== $name ========"
-
 if {
   [ -f $ROOT/bin/autoconf ] &&
     version=$($ROOT/bin/autoconf --version) &&
@@ -44,9 +48,6 @@ if {
 fi
 
 # --  Download / Extract  -----------------------------------------------------
-
-targz=$name.tar.gz
-url="http://ftp.gnu.org/gnu/autoconf/$targz"
 
 download $name $url $targz
 extract $name $targz
