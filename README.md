@@ -1,9 +1,9 @@
 <!-- markdownlint-disable-file MD033 -->
 # Multilingual OCR for Swift: using C/C++ libs with iOS (and macOS)
 
-Welcome to our project, **Tesseract OCR in _your_ Xcode Project**.  We started this project because we really wanted Japanese OCR in an iOS.  Apple's Vision system doesn't support Japanese, so we picked the open-source project Tesseract OCR, and... we started running into issues around building C/C++ libs for iOS (and macOS).
+Welcome to our project, **Tesseract OCR in _your_ Xcode Project**.
 
-We worked through it all, though, and are happy to say "we did it!". We also wanted to show you how easy it can be...
+We started this project because we really wanted Japanese OCR in an iOS app.  Apple's Vision system doesn't support Japanese, so we picked the open-source project Tesseract OCR, and... we started running into issues around building C/C++ libs for iOS (and macOS).  We worked through it all, though, and are happy to say "we did it!".  And it doesn't have to be hard, it can be easy...
 
 ...like, this *easy*:
 
