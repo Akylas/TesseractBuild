@@ -1,46 +1,32 @@
-#!/bin/zsh -f
+#!/bin/zsh
+
+name=$1
+os_arch=$2
+dirname=$3
 
 thisAbsPath=${0:A}
 parentPath=${thisAbsPath%/*}
 
-if ! source $parentPath/../set_env.sh; then
-  echo Error sourcing $parentPath/../set_env.sh
-  exit 1
-fi
+setEnvPath=$parentPath/../set_env.sh
+source $setEnvPath || { echo "ERROR could not source $setEnvPath"; exit 1 }
 
-# ARCH='arm64'
-# TARGET='arm-apple-darwin64'
-# PLATFORM='iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk'
-# PLATFORM_MIN_VERSION='-miphoneos-version-min=11.0'
-
-name=$1    # tesseract-5.0.0
-os_arch=$2 # ios_arm64
 
 print -n "$os_arch: "
 
-# Verify libtesseract.a is installed; requires pkglib is installed
-pkg_lib=$ROOT/$os_arch/lib/libtesseract.a
-if {
-  [ -f $pkg_lib ] &&
-    info=$(lipo -info $pkg_lib) &&
-    [[ $info =~ 'Non-fat file' ]] &&
-    [[ $info =~ $ARCH ]]
-}; then
-  print "skipped config/make/install, found valid single-$ARCH-arch $pkg_lib"
-  exit 0
-fi
+# Use to verify a previous build and skip, or verify this build
+thisLib=$ROOT/$os_arch/lib/libtesseract.a
 
-# Verify sysroot platform exists
-if [ ! -d /Applications/Xcode.app/Contents/Developer/Platforms/$PLATFORM ]; then
-  print "ERROR $PLATFORM does not exist; has the SDK been updated?"
-fi
+# Skip build if check returns w/0
+checkForXcodeLib $thisLib $ARCH && exit 0
+
+verifyPlatform || exit 1
 
 cflags=(
-  "-arch $ARCH"
   "-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/$PLATFORM"
-  "-I$ROOT/$os_arch/"
   $PLATFORM_MIN_VERSION
   "--target=$TARGET"
+  
+  "-I$ROOT/$os_arch/"
 
   '-fembed-bitcode'
   '-no-cpp-precomp'
@@ -50,11 +36,11 @@ cflags=(
 
 # sames as cflags, but sans `-fembed-bitcode`
 cxxflags=(
-  "-arch $ARCH"
   "-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/$PLATFORM"
-  "-I$ROOT/$os_arch/"
   $PLATFORM_MIN_VERSION
   "--target=$TARGET"
+
+  "-I$ROOT/$os_arch/"
 
   '-no-cpp-precomp'
   '-O2'
@@ -73,10 +59,11 @@ config_flags=(
   LIBS='-lz -lpng -ljpeg -ltiff'
   PKG_CONFIG_PATH="$ROOT/$os_arch/lib/pkgconfig"
 
-  '--disable-graphics'
   '--enable-shared=no'
   "--host=$TARGET"
   "--prefix=$ROOT/$os_arch"
+
+  '--disable-graphics'
 )
 
 xc mkdir -p $SOURCES/$name/$os_arch || exit 1
@@ -99,3 +86,5 @@ print -n 'done, '
 print -n 'installing... '
 xl $name "5_install_$os_arch" make install || exit 1
 print 'done.'
+
+validateBuiltLib $thisLib $ARCH || exit 1

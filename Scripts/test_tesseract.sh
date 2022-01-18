@@ -3,14 +3,10 @@
 thisAbsPath=${0:A}
 parentPath=${thisAbsPath%/*}
 scriptName=${thisAbsPath##*/}
-builddir=$parentdir/build
 
-if ! source $builddir/set_env.sh; then
-  echo "test_tesseract.sh: error sourcing $builddir/set_env.sh"
-  exit 1
-fi
+setEnvPath=$parentPath/set_env.sh
+source $setEnvPath || { echo "ERROR could not source $setEnvPath"; exit 1 }
 
-export TESSDATA_PREFIX=$ROOT/share/tessdata
 mkdir -p $TESSDATA_PREFIX
 
 echo 'Checking for trained data language files...'
@@ -91,7 +87,7 @@ test_image() {
 vars=(
   'Japanese'
   $ASSETSDIR/japanese.imageset/test_hello_hori.png
-  'v4_jpn'
+  'jpn'
   'Hello,世界'
 )
 
