@@ -4,8 +4,12 @@
 
 thisAbsPath=${0:A}
 parentPath=${thisAbsPath%/*}
+scriptsDir=${parentPath%/gnu-tools}
+TBE_PROJECTDIR=${scriptsDir%/Scripts}
 
-print "\nRunning $thisAbsPath"
+export TBE_PROJECTDIR
+
+print "\nRunning ${thisAbsPath/$TBE_PROJECTDIR/\$TBE_PROJECTDIR}"
 
 if [[ -n $1 ]] && [[ $1 == 'clean-all' ]]; then
   zsh $parentPath/build_autoconf.sh clean

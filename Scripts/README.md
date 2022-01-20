@@ -2,48 +2,50 @@
 
 The ultimate goal is to have 5 libs that you can import into an Xcode project: libjpeg, libpng, libtiff, liblept, and libtesseract.  To build those, you'll first need to build some tools from GNU.
 
-[Scripts/Build_All.sh](./Build_All.sh) makes the GNU tools and the Xcode libs by calling these two scripts, in order:
-1.  `gnu-tools/Build_All.sh`
-2.  `xcode-libs/Build_All.sh`
+[`Scripts/Build_All.sh`](./Build_All.sh) makes the GNU tools and the Xcode libs by calling these two scripts, in order:
 
-After `Scripts/Build_All.sh` completes, you need to run [test_tesseract.sh](./test_tesseract.sh).  It downloads the reqiured language data from the Tesseract project, and then runs the command-line tesseract program with that langauge data against some test images.
+```none
+gnu-tools/Build_All.sh
+xcode-libs/Build_All.sh
+```
+
+After `Scripts/Build_All.sh` completes, you need to run [`test_tesseract.sh`](./test_tesseract.sh).  It downloads the reqiured language data from the Tesseract project, and then runs the command-line tesseract program with that langauge data against some test images.
 
 After `test_tesseract.sh` completes, with passing image-tests, you can confidently move on to [using the C/C++ libs in Xcode](../iOCR/README.md).
 
-Please read on if you want to learn more about the project environment and the build scripts themselves; or, [return to the Guide](../README.md).
+Read on if you want to learn more about the build scripts, and configuring a C/C++ project.
+
+([⬆️ _return to The Guide_](../README.md))
 
 ## The build scripts
 
-<!-- (...and, on the subject of scripts, we wrote all our scripts in/for ZSH.  We've commented on some particular ZSH-y things in [the Scripts README, _ZSH things_](./Scripts/README.md#zsh-things).) -->
-
-The Build_All scripts call individual build scripts, like build_automake.sh, or build_tesseract.sh.  You can call any script directly, from any location (pwd) and they should just work.  If you were to call build_tesseract first, without building all of its dependencies, it would happily start up and try to do its best till it found something missing, and then it would halt with an error message.  Build-related errors are logged in ./Logs, and the script prints a helpful message, directing you to the relevant log file.
-
-The build order is:
+Above, you saw that the top Build_All script calls two other Build_All scripts, one for the GNU Tools and the other for the Xcode libs.  Those two call a sequence of `build_*.sh` scripts:
 
 ```none
-./gnu-tools:
-  1. build_autoconf.sh
-  2. build_automake.sh
-  3. build_pkgconfig.sh
-  4. build_libtool.sh
-
-./xcode-libs:
-  5. build_libjpeg.sh
-  6. build_libpng.sh
-  7. build_libtiff.sh
-  8. build_leptonica.sh
-  9. build_tesseract.sh
+gnu-tools/Build_All.sh:    xcode-libs/Build_All.sh:
+  1. build_autoconf.sh       5. build_libjpeg.sh
+  2. build_automake.sh       6. build_libpng.sh
+  3. build_pkgconfig.sh      7. build_libtiff.sh
+  4. build_libtool.sh        8. build_leptonica.sh
+                             9. build_tesseract.sh
 ```
 
-The build_*.sh scripts all have this in common:
--   they depend on set_env.sh
--   they can download their own source (tarball), and save it in ./Downloads
--   they can extract their tarball, into ./Sources
--   they are pre-configured to build to ARM64 for iOS, iOS-Simulator, and macOS; and X86_64 for iOS-Simulator and macOS
+Each `build_*.sh` script can download its source from the web, untar it, and start running its config-make-install process to create the tool or the lib.
 
-All the build_*.sh scripts accept a `clean` argument to remove their build products from the Root directory; any changes to their Sources directories is left alone.  For the Build_All scripts you can pass `clean-all` to have clean called on the individual scripts.
+The build scripts for the GNU tools are very simple.  They only target one architecture, and contain a very short and simple config-make-install process.
+
+The build scrips for the Xcode libs are more complex.  They target multiple architectures, and have a number of config flags/options.  All that would make for a very long script with lots of duplication.  For that reason I split up the build process for each Xcode lib.
+
+The parent `build_name.sh` handles its cleans/donwloads/untars, taking care of the basic groundwork (same as the GNU-tools script).  It then, for each of its targets, exports four env vars and calls its own `config-make-install_name.sh` script.
+
+The config-make-install script reads those four exported env vars, which includes the target's platform/OS and architecture. It then runs the `./configure`, `make`, and `make install` commands.  After each `make install` completes, it uses the `lipo` tool to verify the libs were created with the proper architecture and installed in the correct location.
+
+With all that done, the parent `build_name.sh` script finishes by using `lipo` to combine like libs into a single "fat" lib, for example, joining macos_x86_64 and macos_arm64 into a single 'macos' lib.
 
 ### set_env.sh
+
+https://unix.stackexchange.com/questions/126223/practical-usage-of-set-k-option-in-bash
+https://unix.stackexchange.com/questions/130985/if-processes-inherit-the-parents-environment-why-do-we-need-export
 
 `set_env.sh` creates all the project-level environment variables that build scripts need to know, like downloading and extracting tarballs, verifying files exist, or setting up folders for all the build targets.  Every build and config script sources `set_env.sh` when it starts up; `test_tesseract.sh` also sources it.
 
@@ -60,7 +62,7 @@ It adds that nice `(TBE)` prompt (**T**esseract **B**uild **E**nvironment) to le
 (TBE) % tbe-help
 
 Directory vars required for config-make-install and build scripts:
-$PROJECTDIR:  /home/user/develop/TesseractBuild
+$TBE_PROJECTDIR:  /home/user/develop/TesseractBuild
 $DOWNLOADS:   /home/user/develop/TesseractBuild/Downloads
 $LOGS:        /home/user/develop/TesseractBuild/Logs
 $ROOT:        /home/user/develop/TesseractBuild/Root
@@ -121,7 +123,7 @@ Invalid configuration `arm64-apple-ios15.2-simulator': Kernel `ios15.2' not know
 
 My solution is to download the latest config.sub from GNU and, for now, patch in a hack that allows 'simulator' to be passed through by just cutting it out of the input argument.
 
-[$PROJECTDIR/Scripts/download_config.sub_and_patch.sh](./download_config.sub_and_patch.sh) handles those three steps.
+[$TBE_PROJECTDIR/Scripts/download_config.sub_and_patch.sh](./download_config.sub_and_patch.sh) handles those three steps.
 
 ### `-lrt`
 
@@ -182,13 +184,13 @@ Given this error running build_all.sh:
 macos_x86_64: configuring... ERROR running ../configure CC=...
 ...
 ...
-ERROR see ~/$PROJECTDIR/Logs/tesseract-4.1.1/3_config_macos_x86_64.err for more details
+ERROR see ~/$TBE_PROJECTDIR/Logs/tesseract-4.1.1/3_config_macos_x86_64.err for more details
 ```
 
 Looking at **Logs/tesseract-4.1.1/3_config_macos_x86_64.err**:
 
 ```none
-configure: error: in `~/$PROJECTDIR/Sources/tesseract-4.1.1/macos_x86_64':
+configure: error: in `~/$TBE_PROJECTDIR/Sources/tesseract-4.1.1/macos_x86_64':
 configure: error: C++ compiler cannot create executables
 See `config.log' for more details
 ```

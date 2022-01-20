@@ -1,20 +1,22 @@
 #!/bin/zsh
+[ -z $ARCH ] || [ -z $TARGET ] || [ -z $PLATFORM ] || [ -z $PLATFORM_MIN_VERSION ] && { echo "
+Error: Some required config vars are not set.\n
+ARCH:$ARCH
+TARGET:$TARGET
+PLATFORM:$PLATFORM
+PLATFORM_MIN_VERSION:$PLATFORM_MIN_VERSION\n"; exit 1 }
+
+[ -z $TBE_PROJECTDIR ] && { echo "
+Error: The TBE_PROJECTDIR env var is not set.\n"; exit 1 }
+
+source $TBE_PROJECTDIR/Scripts/set_env.sh
 
 name=$1
 os_arch=$2
 dirname=$3
-
-thisAbsPath=${0:A}
-parentPath=${thisAbsPath%/*}
-
-setEnvPath=$parentPath/../set_env.sh
-source $setEnvPath || { echo "ERROR could not source $setEnvPath"; exit 1 }
-
+thisLib=$ROOT/$os_arch/lib/liblept.a
 
 print -n "$os_arch: "
-
-# Use to verify a previous build and skip, or verify this build
-thisLib=$ROOT/$os_arch/lib/liblept.a
 
 # Skip build if check returns w/0
 checkForXcodeLib $thisLib $ARCH && exit 0

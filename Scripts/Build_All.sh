@@ -3,17 +3,20 @@
 # Builds gnu-tools, then builds xcode-libs
 
 thisAbsPath=${0:A}
-parentPath=${thisAbsPath%/*}
+scriptsDir=${thisAbsPath%/*}
+TBE_PROJECTDIR=${scriptsDir%/Scripts}
 
-echo "Running $thisAbsPath"
+export TBE_PROJECTDIR
+
+print "\nRunning ${thisAbsPath/$TBE_PROJECTDIR/\$TBE_PROJECTDIR}"
 
 if [[ $1 == 'clean-all' ]]; then
-  zsh $parentPath/gnu-tools/Build_All.sh clean-all || exit 1
-  zsh $parentPath/xcode-libs/Build_All.sh clean-all || exit 1
+  zsh $scriptsDir/gnu-tools/Build_All.sh clean-all || exit 1
+  zsh $scriptsDir/xcode-libs/Build_All.sh clean-all || exit 1
   
   exit 0
 fi
 
-zsh $parentPath/gnu-tools/Build_All.sh || exit 1
-zsh $parentPath/xcode-libs/Build_All.sh || exit 1
+zsh $scriptsDir/gnu-tools/Build_All.sh || exit 1
+zsh $scriptsDir/xcode-libs/Build_All.sh || exit 1
 

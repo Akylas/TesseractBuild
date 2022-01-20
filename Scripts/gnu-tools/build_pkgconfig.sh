@@ -1,4 +1,14 @@
 #!/bin/zsh -f
+[ -z $TBE_PROJECTDIR ] && { echo "
+Error: The TBE_PROJECTDIR env var is not set.\n
+-   If you are manually runing this build, set this var to the path of your
+    TesseractBuild project's directory and re-run, e.g.\n
+        export TBE_PROJECTDIR=\$(pwd)\n
+-   If you are seeing this after calling one of the Build_All.sh scripts,
+    double-check that the script is correctly setting the TBE_PROJECTDIR env var.
+"; exit 1 }
+
+source $TBE_PROJECTDIR/Scripts/set_env.sh
 
 name='pkg-config-0.29.2'
 targz=$name.tar.gz
@@ -6,14 +16,6 @@ url="https://pkg-config.freedesktop.org/releases/$targz"
 dirname=$name
 
 print "\n======== $name ========"
-
-thisAbsPath=${0:A}
-parentPath=${thisAbsPath%/*}
-scriptName=${thisAbsPath##*/}
-
-setEnvPath=$parentPath/../set_env.sh
-source $setEnvPath || { echo "ERROR could not source $setEnvPath"; exit 1 }
-
 
 # --  Clean  ------------------------------------------------------------------
 

@@ -31,7 +31,7 @@ If you want to know more, read on to...
 
 ## The project environment
 
-When you clone this repo (or download the ZIP and expand it), you'll be looking at a directory/folder we refer to as the **PROJECTDIR**.  Navigate into your PROJECTDIR, and you'll see the inital state of the repo, which looks mostly like this (only showing the important stuff, for now):
+When you clone this repo (or download the ZIP and expand it), you'll be looking at a directory/folder we refer to as the **TBE_PROJECTDIR**.  Navigate to your TBE_PROJECTDIR, and you'll see the inital state of the repo, which looks mostly like this (only showing the important stuff, for now):
 
 ```sh
 iOCR
@@ -296,7 +296,7 @@ There is a small test and full working example of these basics in **iOCRTests.sw
 
 ### iOCR Xcode project
 
-**PROJECTDIR/iOCR/iOCR.xcodeproj** is an example of putting everything together into a working project and running an app in the simulator that shows off those API basics.
+**TBE_PROJECTDIR/iOCR/iOCR.xcodeproj** is an example of putting everything together into a working project and running an app in the simulator that shows off those API basics.
 
 Open the project and run the **iOCR** target for an **iPad Pro (12.9-in)** (some of the UI was coded specifically for that device's screen size).
 

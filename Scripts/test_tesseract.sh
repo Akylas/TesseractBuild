@@ -2,9 +2,8 @@
 
 thisAbsPath=${0:A}
 parentPath=${thisAbsPath%/*}
-scriptName=${thisAbsPath##*/}
-
 setEnvPath=$parentPath/set_env.sh
+
 source $setEnvPath || { echo "ERROR could not source $setEnvPath"; exit 1 }
 
 mkdir -p $TESSDATA_PREFIX
@@ -41,7 +40,7 @@ strip_whitespace() {
 
 echo "Recognizing sample images with $(which tesseract)..."
 
-ASSETSDIR=$PROJECTDIR/iOCR/Assets.xcassets
+ASSETSDIR=$TBE_PROJECTDIR/iOCR/Assets.xcassets
 TESTDIR=tesseractTest
 
 mkdir -p $TESTDIR; cd $TESTDIR || exit 1
