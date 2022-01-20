@@ -1,9 +1,9 @@
 <!-- markdownlint-disable-file MD033 -->
 # Multilingual OCR for Swift: using C/C++ libs with iOS (and macOS)
 
-Welcome to our project, **Tesseract OCR in _your_ Xcode Project**.  We started this project because we really wanted Japanese OCR in an iOS.  Apple's Vision system doesn't support Japanese, so we picked the open-source project Tesseract OCR, and... we started running into issues around building C/C++ libs for iOS (and macOS).
+Welcome to our project, **Tesseract OCR in _your_ Xcode Project**.
 
-We worked through it all, though, and are happy to say "we did it!". We also wanted to show you how easy it can be...
+We started this project because we really wanted Japanese OCR in an iOS app.  Apple's Vision system doesn't support Japanese, so we picked the open-source project Tesseract OCR, and... we started running into issues around building C/C++ libs for iOS (and macOS).  We worked through it all, though, and are happy to say "we did it!".  And it doesn't have to be hard, it can be easy...
 
 ...like, this *easy*:
 
@@ -15,12 +15,11 @@ We worked through it all, though, and are happy to say "we did it!". We also wan
 1. open `iOCR/iOS/iOCR-iOS.xcodeproj`
 1. run the **iOCR** target on an **iPad Pro 12.9-inch Simulator** and see that Chinese, English, and Japanese text are recognized in the app
 
-
-We always wanted you to be able to do something like this, too!, so as we went along we made this, _Our Guide to Building and Integrating C/C++ libs in Xcode_.
+We always wanted you to be able to do something like this, too!, so we made this, _Our Guide to Building and Integrating C/C++ libs in Xcode_.
 
 ## This Guide
 
-This Guide covers how we made this project/repo (the "build environment"), how to target builds for different frameworks and processor architectures, and finally import the libs into Xcode and use their C-API's with Swift.
+This Guide covers how we made this project/repo (the "build environment"), how to target builds for different frameworks and processor architectures, and finally how to import the libs into Xcode and use their C-API's with Swift.
 
 If you want to know more, read on to...
 
