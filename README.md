@@ -170,16 +170,16 @@ Run **Scripts/test_tesseract.sh** to download the trained data and run a quick O
 <table>
 <tr>
 <td>
-<img height="300" src="iOCR/iOCR/Assets.xcassets/chinese_traditional_vert.imageset/cropped.png"/>
+<img height="300" src="iOCR/Assets.xcassets/chinese_traditional_vert.imageset/cropped.png"/>
 </td>
 <td>
-<img width="300" src="iOCR/iOCR/Assets.xcassets/japanese.imageset/test_hello_hori.png "/>
+<img width="300" src="iOCR/Assets.xcassets/japanese.imageset/test_hello_hori.png "/>
 </td>
 <td>
-<img height="300" src="iOCR/iOCR/Assets.xcassets/japanese_vert.imageset/test_hello_vert.png"/>
+<img height="300" src="iOCR/Assets.xcassets/japanese_vert.imageset/test_hello_vert.png"/>
 </td>
 <td>
-<img height="300" src="iOCR/iOCR/Assets.xcassets/english_left_just_square.imageset/hexdreams.png"/>
+<img height="300" src="iOCR/Assets.xcassets/english_left_just_square.imageset/hexdreams.png"/>
 </td>
 </tr>
 <tr>
