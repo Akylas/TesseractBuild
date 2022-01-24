@@ -1,10 +1,13 @@
 #!/bin/zsh -f
 
 thisAbsPath=${0:A}
-parentPath=${thisAbsPath%/*}
-setEnvPath=$parentPath/set_env.sh
+scriptsDir=${thisAbsPath%/*}
+TBE_PROJECTDIR=${scriptsDir%/Scripts}
 
-source $setEnvPath || { echo "ERROR could not source $setEnvPath"; exit 1 }
+source $TBE_PROJECTDIR/Scripts/set_env.sh || {
+  echo "ERROR could not source $TBE_PROJECTDIR/Scripts/set_env.sh"
+  exit 1
+}
 
 mkdir -p $TESSDATA_PREFIX
 
@@ -20,16 +23,16 @@ langfiles=(
 
 for langfile in $langfiles; do
   if [ -f $TESSDATA_PREFIX/$langfile ]; then
-    echo "found $langfile"
+    echo " found ${TESSDATA_PREFIX/$TBE_PROJECTDIR/\$TBE_PROJECTDIR}/$langfile"
     continue
   fi
 
-  print -n "downloading $langfile..."
+  print -n " downloading $langfile..."
   curl -L -f -s \
     https://github.com/tesseract-ocr/tessdata_best/raw/main/$langfile \
     --output $TESSDATA_PREFIX/$langfile \
     || { echo "Error: could not download https://github.com/tesseract-ocr/tessdata_best/raw/master/$langfile"; exit 1 }
-  print 'done'
+  print 'done.'
 done
 
 strip_whitespace() {
@@ -38,7 +41,7 @@ strip_whitespace() {
   cat $filename | tr -d '\n' | tr -d '\f' | tr -d ' '
 }
 
-echo "Recognizing sample images with $(which tesseract)..."
+echo "Recognizing sample images with ${$(which tesseract)/$TBE_PROJECTDIR/\$TBE_PROJECTDIR}..."
 
 ASSETSDIR=$TBE_PROJECTDIR/iOCR/Assets.xcassets
 TESTDIR=tesseractTest
@@ -55,7 +58,7 @@ test_image() {
   local trainedDataName=$3
   local whtspcStrippedWant=$4
 
-  print -n "testing $testName..."
+  print -n " testing $testName... "
 
   if ! [ -f $image ]; then
     echo "ERROR could not find image file $image"
@@ -77,7 +80,7 @@ test_image() {
   got=$(strip_whitespace $tessOutFile.txt)
 
   if [ $got = $whtspcStrippedWant ]; then
-    print 'passed'
+    print 'passed.'
   else
     print "*failed*: got '$got', want '$whtspcStrippedWant'"
   fi
