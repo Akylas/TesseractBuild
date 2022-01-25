@@ -218,16 +218,16 @@ The following Swift excerpts were taken from **testGuideExample()** in **iOCR/iO
 
 #### Initialize API handler
 
-Create an API handler and initialize it with the trained data's parent folder, the trained data's language name, and an *OCR engine mode (OEM)*.  **OEM_LSTM_ONLY** is the latest neural-net recognition engine, which has some advantage in text-line recognition over the previous engine.
+Create an API handler and initialize it with the trained data's parent folder, the trained data's language name, and an *OCR engine mode (OEM)*:
 
 ```swift
 let tessAPI = TessBaseAPICreate()!
 TessBaseAPIInit2(tessAPI, trainedDataFolder, "jpn_vert", OEM_LSTM_ONLY)
 ```
 
-**TessBaseAPIInit2()** is one of 4 API initializers, and lets us set the OEM.
+**TessBaseAPIInit2()** is one of 4 API initializers, and lets us set the OEM.  **OEM_LSTM_ONLY** is the latest neural-net recognition engine, which has some advantage in text-line recognition over the previous engine.
 
-For the API to be able to find the **tessdata** parent-folder, we added **Root/share** as a folder reference, then:
+For the API to be able to find the **tessdata** parent-folder, we added **Root/share** as a folder reference in our Xcode project, then:
 
 ```swift
 let trainedDataFolder = Bundle.main.path(
@@ -236,7 +236,7 @@ let trainedDataFolder = Bundle.main.path(
 
 #### Prepare the image
 
-We use **TessBaseAPISetImage2()** to set the image, and that API requires the image to be in Leptonica's **PIX** format, so we need to get a pointer to a byte string of some UIImage data and pass that pointer to **pixReadMem()**:
+We use **TessBaseAPISetImage2()** to set the image, and that API requires the image to be in Leptonica's **PIX** format.  We create the PIX object by getting a pointer to a byte-string of some UIImage data, and then passing that pointer to the **pixReadMem()** function:
 
 ```swift
 let uiImage = UIImage(named: "japanese_vert")!
@@ -271,7 +271,7 @@ print String(cString: txt!)
   (String) $R3 = "Hello\n\n,世界\n"
 ```
 
-We could stop here, but there's more we can know about the text.
+Now that we have some text from the image, we want to know _where_ in the image Tesseract found it.
 
 #### Iterate over results
 
@@ -299,7 +299,7 @@ There is a small test and full working example of these basics in **iOCRTests.sw
 
 Open the project and run the **iOCR** target for an **iPad Pro (12.9-in)** (some of the UI was coded specifically for that device's screen size).
 
-<img height="683" src="Notes/static/guide/ipad_app_all_good.png"/>
+<img height="683" src="Notes/static/Guide/ipad_app_all_good.png"/>
 
 <!--
 We can also see between horizontal and vertical Japanese, and vertical Chinese, that the results of a "line" varies depending on some combination of language and the text's orientation:
@@ -373,7 +373,7 @@ But&mdash;to make a point about better configuration making for better recogniti
 
 Re-run the app and we can see the text value `<*blank*>` with a confidence of 95%.  This value corresponds to the unexpected recognition of a single stroke inside the <span style="font-size: 1.1em">世</span> character as a whole other valid character:
 
-<img height="404" src="Notes/static/guide/ipad_app_bad_blank_cropped.png"/>
+<img height="404" src="Notes/static/Guide/ipad_app_bad_blank_cropped.png"/>
 
 #### Learning Tesseract
 
