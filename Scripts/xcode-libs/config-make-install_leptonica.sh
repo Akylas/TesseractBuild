@@ -44,7 +44,7 @@ config_flags=(
   CPPFLAGS="$cflags"
   CXXFLAGS="$cflags -Wno-deprecated-register"
   LDFLAGS="-L$ROOT/$os_arch/lib -L/Applications/Xcode.app/Contents/Developer/Platforms/$PLATFORM/usr/lib/"
-  LIBS='-lz -lpng -ljpeg -ltiff'
+  LIBS='-lz -lpng'
   PKG_CONFIG_PATH="$ROOT/$os_arch/lib/pkgconfig"
 
   '--enable-shared=no'
@@ -52,10 +52,10 @@ config_flags=(
   "--prefix=$ROOT/$os_arch"
 
   '--disable-programs'
-  '--with-jpeg'
+  '--without-jpeg'
   '--with-libpng'
-  '--with-libtiff'
-  '--with-zlib'
+  '--without-libtiff'
+  '--without-zlib'
   '--without-giflib'
   '--without-libwebp'
 )

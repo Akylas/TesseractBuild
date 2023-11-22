@@ -24,6 +24,8 @@ checkForXcodeLib $thisLib $ARCH && exit 0
 verifyPlatform || exit 1
 
 cflags=(
+  "-std=c++17"
+  "-stdlib=libc++"
   "-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/$PLATFORM"
   $PLATFORM_MIN_VERSION
   "--target=$TARGET"
@@ -32,12 +34,14 @@ cflags=(
 
   '-fembed-bitcode'
   '-no-cpp-precomp'
-  '-O2'
+  '-O3 -g3'
   '-pipe'
 )
 
 # sames as cflags, but sans `-fembed-bitcode`
 cxxflags=(
+  "-std=c++17"
+  "-stdlib=libc++"
   "-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/$PLATFORM"
   $PLATFORM_MIN_VERSION
   "--target=$TARGET"
@@ -45,7 +49,7 @@ cxxflags=(
   "-I$ROOT/$os_arch/"
 
   '-no-cpp-precomp'
-  '-O2'
+  '-O3 -g3'
   '-pipe'
 )
 
@@ -58,14 +62,15 @@ config_flags=(
   CXXFLAGS="$cxxflags"
   LDFLAGS="-L$ROOT/$os_arch/lib -L/Applications/Xcode.app/Contents/Developer/Platforms/$PLATFORM/usr/lib/"
   LIBLEPT_HEADERSDIR="$ROOT/$os_arch/include"
-  LIBS='-lz -lpng -ljpeg -ltiff'
+  LIBS='-lz -lpng'
   PKG_CONFIG_PATH="$ROOT/$os_arch/lib/pkgconfig"
 
-  '--enable-shared=no'
   "--host=$TARGET"
   "--prefix=$ROOT/$os_arch"
 
   '--disable-graphics'
+  '--disable-legacy'
+  '--without-curl'
 )
 
 xc mkdir -p $SOURCES/$dirname/$os_arch || exit 1
@@ -77,13 +82,13 @@ xl $name "3_config_$os_arch" ../configure $config_flags || exit 1
 print -n 'done, '
 
 print -n 'overriding Makefile... '
-sed 's/am__append_46 = -lrt/# am__append_46 = -lrt/' Makefile > tmp || { echo "Error: could not sed/comment-out '-lrt' flag to tmp file"; exit 1 }
+sed 's/am__append_49 = -lrt/# am__append_49 = -lrt/' Makefile > tmp || { echo "Error: could not sed/comment-out '-lrt' flag to tmp file"; exit 1 }
 mv tmp Makefile || { echo 'Error: could not move tmp file back on top of Makefile'; exit 1 }
 print -n 'done, '
 
 print -n 'making... '
 xl $name "4_clean_$os_arch" make clean || exit 1
-xl $name "4_make_$os_arch" make -j || exit 1
+xl $name "4_make_$os_arch" make -j V=1 || exit 1
 print -n 'done, '
 
 print -n 'installing... '

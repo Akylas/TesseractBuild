@@ -13,9 +13,9 @@ source $TBE_PROJECTDIR/Scripts/set_env.sh
 thisAbsPath=${0:A}
 parentPath=${thisAbsPath%/*}
 
-name='tesseract-5.0.0'
-targz='5.0.0.tar.gz'
-url="https://github.com/tesseract-ocr/tesseract/archive/$targz"
+name='tesseract-5.3.3'
+targz='5.3.3.tar.gz'
+url="https://github.com/Akylas/tesseract/archive/refs/tags/$targz"
 dirname=$name
 
 print "\n======== $name ========"

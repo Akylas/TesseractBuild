@@ -1,6 +1,6 @@
 ROOT = $(PROJECT_DIR)/../../Root
 SWIFT_INCLUDE_PATHS = $(ROOT)/include/**
 LIBRARY_SEARCH_PATHS = $(ROOT)/lib/**
-OTHER_LDFLAGS[sdk=iphoneos*] = -ljpeg-ios -llept-ios -lpng16-ios -ltesseract-ios -ltiff-ios
-OTHER_LDFLAGS[sdk=iphonesimulator*] = -ljpeg-sim -ltesseract-sim -lpng16-sim -ltiff-sim -llept-sim
-OTHER_LDFLAGS[sdk=macosx*] = -ljpeg-macos -ltesseract-macos -lpng16-macos -ltiff-macos -llept-macos
+OTHER_LDFLAGS[sdk=iphoneos*] = -llept-ios -lpng16-ios -ltesseract-ios
+OTHER_LDFLAGS[sdk=iphonesimulator*] = -ltesseract-sim -lpng16-sim -llept-sim
+OTHER_LDFLAGS[sdk=macosx*] = -ltesseract-macos -lpng16-macos -llept-macos
