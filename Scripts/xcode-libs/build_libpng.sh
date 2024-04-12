@@ -13,9 +13,9 @@ source $TBE_PROJECTDIR/Scripts/set_env.sh
 thisAbsPath=${0:A}
 parentPath=${thisAbsPath%/*}
 
-name='libpng-1.6.37'
+name='libpng-1.6.42'
 targz=$name.tar.gz
-url="https://downloads.sourceforge.net/project/libpng/libpng16/1.6.37/$targz"
+url="https://downloads.sourceforge.net/project/libpng/libpng16/1.6.42/$targz"
 dirname=$name
 
 print "\n======== $name ========"

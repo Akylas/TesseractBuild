@@ -13,9 +13,9 @@ source $TBE_PROJECTDIR/Scripts/set_env.sh
 thisAbsPath=${0:A}
 parentPath=${thisAbsPath%/*}
 
-name='leptonica-1.82.0'
+name='leptonica-1.84.1'
 targz=$name.tar.gz
-url="https://github.com/DanBloomberg/leptonica/releases/download/1.82.0/$targz"
+url="https://github.com/DanBloomberg/leptonica/releases/download/1.84.1/$targz"
 dirname=$name
 
 print "\n======== $name ========"
